@@ -21,6 +21,7 @@ class imagetobinary extends StatefulWidget {
 class _imagetobinaryState extends State<imagetobinary> {
   late Uint8List _imageBytes = Uint8List(0);
   late DatabaseHelper databaseHelper;
+  List<Map<String, dynamic>> _imageList = [];
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,7 @@ databaseHelper=DatabaseHelper.instance;
 print("INI");
   }
   Future<void> loadImageAndConvert() async {
-    Uint8List imageBytes = await loadImageBytes('assets/images/calculator.png');
+    Uint8List imageBytes = await loadImageBytes('assets/images/businessman.png');
     setState(() {
       _imageBytes = imageBytes;
     });
@@ -67,12 +68,21 @@ print("INI");
               height: 250,
               width: 250,
               child: Image.asset(
-                'assets/images/calculator.png',
+                'assets/images/businessman.png',
               ),
 
             ),
             ElevatedButton(onPressed: ()async{
-              await loadImageAndConvert();
+          await loadImageAndConvert();
+
+              List<Map<String, dynamic>> imageList =
+              await DatabaseHelper.instance.getImages();
+              setState(() {
+                _imageList = imageList;
+
+              });
+              print(_imageList);
+
 
 
             }, child: Text("Convert")),
@@ -120,17 +130,20 @@ class DatabaseHelper {
   }
 
   Future<void> insertImage(Uint8List imageBytes) async {
+    print("Contine");
     final db = await instance.database;
 
     String binaryString = '';
     for (int byte in imageBytes) {
-      binaryString += byte.toRadixString(2).padLeft(8, '0');
+     binaryString += byte.toRadixString(2).padLeft(8, '0');
+       //binaryString = imageBytes.map((byte) => byte.toRadixString(16)).join('');
     }
 
     await db.insert(
       'images',
       {'image': imageBytes, 'binaryString': binaryString},
     );
+
     print("Added");
   }
 
