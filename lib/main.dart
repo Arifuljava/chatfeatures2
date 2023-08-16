@@ -3,7 +3,8 @@ import 'package:chatfeatures/checkuserexsit.dart';
 import 'package:chatfeatures/imagetobinary.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  //await DatabaseHelper.instance.database;
   runApp(const MyApp());
 }
 
