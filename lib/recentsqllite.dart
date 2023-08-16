@@ -15,22 +15,32 @@ class recentsqllite extends StatefulWidget {
 
 class _recentsqlliteState extends State<recentsqllite> {
   final dbHelper = DatabaseHelper("Arif");
-
+  final dbHelper2 = DatabaseHelper("Arif");
   Future<void> fetchDataList() async {
     List<MyDataModel> fetchedData = await dbHelper.getAllData();
     setState(() {
       dataList = fetchedData;
     });
     List<String> contentDataList = dataList.map((data) => data.contentData).toList();
-
     print(contentDataList);
   }
+  //
+  Future<void> fetchDataList2() async {
+    List<Model22> fetchedData1 = await dbHelper2.getAllData2();
+    setState(() {
+      dataList1 = fetchedData1;
+    });
+    List<String> contentDataList = dataList1.map((data) => data.myid).toList();
+    print(dataList1);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    ini(dbHelper);
+    ini(dbHelper,dbHelper2);
   fetchDataList();
+ // fetchDataList2();
   }
   @override
   Widget build(BuildContext context) {
@@ -38,11 +48,15 @@ class _recentsqlliteState extends State<recentsqllite> {
   }
 }
 List<MyDataModel> dataList = [];
-
-void ini(DatabaseHelper dbHelper) async
+List<Model22> dataList1 = [];
+void ini(DatabaseHelper dbHelper, DatabaseHelper helper2) async
 
 {
   await dbHelper._initDatabase();
+  await helper2._initDatabase2();
+  final data22 = Model22(myid: "23", date: "3233", size: "size", name: "name", imagebitmap: "imageBitmap");
+  await helper2.insertData2(data22);
+
   print("init");
   final data = MyDataModel(
     contentData: 'some content',
@@ -67,6 +81,48 @@ void ini(DatabaseHelper dbHelper) async
 
 
 }
+//second model
+
+class Model22 {
+
+  final String myid;
+  final String date;
+  final String size;
+  final String name;
+  final String imagebitmap;
+
+  Model22({
+
+    required this.myid,
+    required this.date,
+    required this.size,
+    required this.name,
+    required this.imagebitmap,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+
+      'myid': myid,
+      'date': date,
+      'size': size,
+      'name': name,
+      'imagebitmap': imagebitmap,
+    };
+  }
+
+  factory Model22.fromMap(Map<String, dynamic> map) {
+    return Model22(
+      myid: map['myid'],
+      date: map['date'],
+      size: map['size'],
+      name: map['name'],
+      imagebitmap: map['imagebitmap'],
+    );
+  }
+}
+
+/////////
 class MyData {
   final String contentdata;
   final double positionX;
@@ -191,6 +247,27 @@ class DatabaseHelper {
     return _database!;
   }
 
+  Future<Database> _initDatabase2() async {
+    final String dbPath = await getDatabasesPath();
+    final String path = join(dbPath, databasename);
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) {
+        return db.execute('''
+          CREATE TABLE $databasename(
+            id INTEGER PRIMARY KEY,
+            myid TEXT,
+            date TEXT,
+            size TEXT,
+            name TEXT,
+            imagebitmap TEXT
+          )
+        ''');
+      },
+    );
+  }
   Future<Database> _initDatabase() async {
     final String dbPath = await getDatabasesPath();
     final String path = join(dbPath, databasename);
@@ -234,6 +311,21 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query(databasename);
     return List.generate(maps.length, (i) {
       return MyDataModel.fromMap(maps[i]);
+    });
+  }
+  //2////////
+  Future<void> insertData2(Model22 data) async {
+    final db = await database;
+    await db.insert(databasename, data.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    print("Added" + data.toMap().toString());
+  }
+
+  Future<List<Model22>> getAllData2() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(databasename);
+    return List.generate(maps.length, (i) {
+      return Model22.fromMap(maps[i]);
     });
   }
 }
