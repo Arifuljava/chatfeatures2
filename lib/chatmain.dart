@@ -2,6 +2,7 @@
 
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class chatmain extends StatefulWidget {
@@ -10,8 +11,137 @@ class chatmain extends StatefulWidget {
   @override
   State<chatmain> createState() => _chatmainState();
 }
-
+int selectedItemIndex = 0;
+List<String> items = [
+  'A203',
+  'B32',
+  'B32R',
+  'A63',
+  'B1',
+  "B18",
+  "P18",
+  "Hi-D110",
+  "B21S",
+  "B21",
+  "Betty",
+  "T2S",
+  "Fust",
+  "T8S",
+  "Dxx",
+  "P1",
+  "A20",
+  "A8",
+  "P1S",
+  "S6",
+  "B3S",
+  "D11S",
+  "Z401",
+  "D101",
+  "T8",
+  "B50W",
+  "S1",
+  "T7",
+  "T6",
+  "S3",
+  "Jc-M90",
+  "D41",
+  "B203",
+  "B16",
+  "D61",
+  "B3",
+  "D110",
+  "JCB3S",
+  "Hi-NB-D11",
+  "B11",
+  "B50",
+  "D11"
+];
+String itemmm = "A203";
 class _chatmainState extends State<chatmain> {
+  void _showPickerDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin:
+                  EdgeInsets.only(left: 20, top: 10, right: 10, bottom: 10),
+                  padding: EdgeInsets.all(2),
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(
+                      Icons.close,
+                      size: 20,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(2),
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Printer",
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                  ),
+                ),
+                Container(
+                  margin:
+                  EdgeInsets.only(top: 10, left: 10, right: 20, bottom: 10),
+                  padding: EdgeInsets.all(2),
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      String selectedValue = items[selectedItemIndex];
+                      itemmm = selectedValue;
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(
+                      Icons.done,
+                      size: 20,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: 200.0, // Adjust the height as per your requirement
+              child: CupertinoPicker(
+                itemExtent: 32.0, // Height of each item in the picker
+                onSelectedItemChanged: (int index) {
+                  setState(() {
+                    selectedItemIndex = index;
+                    String value = items[selectedItemIndex];
+                  });
+                },
+                children: items.map((String item) {
+                  return Container(
+                    margin: EdgeInsets.only(top: 5, left: 10, right: 10),
+                    child: Text(
+                      item,
+                      style: const TextStyle(color: Colors.black54, fontSize: 15),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -89,6 +219,8 @@ class _chatmainState extends State<chatmain> {
             children: <Widget>[
               GestureDetector(
                 onTap: (){
+                  print("getFiles");
+                  _showPickerDialog(context);
                 },
                 child: Container(
                   height: 30,
