@@ -16,12 +16,22 @@ List<UUID_Model> dataList1 = [];
 
 class _uuidStoreState extends State<uuidStore> {
   Future<void> fetchDataList2() async {
+    /*
     List<UUID_Model> fetchedData1 =  await DatabaseHelper.instance.getAllData();
     setState(() {
       dataList1 = fetchedData1;
     });
- //   List<String> contentDataList = dataList1.map((data) => data.myid).toList();
+    List<String> contentDataList = dataList1.map((data) => data.myid).toList();
 print(dataList1);
+     */
+
+    List<UUID_Model> fetchedData = await DatabaseHelper.instance.getAllData();
+    setState(() {
+      dataList1 = fetchedData;
+    });
+
+    List<String> nameList = dataList1.map((data) => data.name).toList();
+    print(nameList[0]);
   }
 
   @override

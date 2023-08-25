@@ -41,7 +41,7 @@ class _recentsqlliteState extends State<recentsqllite> {
   void initState() {
     // TODO: implement initState
     super.initState();
-   // ini(dbHelper,dbHelper2);
+    ini(dbHelper,dbHelper2);
    // ini2(dbHelper3);
     dbHelper3._initDatabase();
  // fetchDataList();
