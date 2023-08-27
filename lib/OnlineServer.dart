@@ -76,6 +76,43 @@ print(allCategories);
   }
   //add Categories
 
+  Future<void> addCategory(String id, String allCategories, String subCategories) async {
+    final Map<String, dynamic> data = {
+      'id': id,
+      'categoryName': allCategories,
+      'subCategoryName': subCategories,
+    };
+
+    final response = await http.post(
+      Uri.parse('https://grozziie.zjweiting.com:8033/tht/labelCategories/add'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      print('Category added successfully');
+    } else {
+      throw Exception('Failed to add category');
+    }
+  }
+
+  Future<void> addCategory22(String categoryName) async {
+    final Map<String, dynamic> data = {
+      'categoryName': categoryName,
+    };
+
+    final response = await http.post(
+      Uri.parse('https://grozziie.zjweiting.com:8033/tht/labelCategories/add'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      print('Category added successfully');
+    } else {
+      throw Exception('Failed to add category');
+    }
+  }
 
 
   @override
@@ -110,7 +147,13 @@ print(allCategories);
   }
 
   void init() async {
-
+    try {
+      //await addCategory22("Tamim");
+     // await addCategory("11","AAAAA","Ekdala");
+     // print('Category added successfully');
+    } catch (e) {
+      print('Error adding category: $e');
+    }
     await fetchAllCategories2();
   }
 }
