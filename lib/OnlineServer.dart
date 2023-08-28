@@ -113,7 +113,52 @@ class _OnlineServerState extends State<OnlineServer> {
       throw Exception('Failed to add category');
     }
   }
+  Future<void> addLabelData222(String tablename, String uuid, String contextdataa,
+      String  positionx, String postiony, String height, String weight,
+      String index, String length, String myuid112,String barcodeee,String is_bold, String is_underline, String is_italic,String is_fontsize,
+      String viewDataList, String viewName,
+      String view_date,String view_size,
+      String view_uuid, String view_image) async {
+    final url = 'https://grozziie.zjweiting.com:8033/tht/allLabelData/add';
+    final headers = {'Content-Type': 'application/json'};
 
+    final data = {
+      "subCategoryName": viewName.toString(),
+      "labelDataList": {
+        "contentData": contextdataa.toString(),
+        "positionX":positionx.toString(),
+        "positionY": postiony.toString(),
+        "widgetWidh": weight.toString(),
+        "widgetHeight": height.toString(),
+        "index": "32",
+        "length": "342",
+        "barcodeType": uuid.toString(),
+        "textSize": is_fontsize.toString(),
+        "bold": is_bold.toString(),
+        "underline": is_underline.toString(),
+        "fromWhere": is_italic.toString(),
+        "type": is_italic.toString(),
+        "address": barcodeee.toString()
+      },
+      "LabelDataView": {
+        "id": viewName.toString(),
+        "myid": view_uuid.toString(),
+        "date": view_date.toString(),
+        "size": view_size.toString(),
+        "name": viewName.toString(),
+        "imagebitmap": view_image.toString()
+      }
+    };
+
+    final response = await http.post(Uri.parse(url), headers: headers, body: json.encode(data));
+
+    if (response.statusCode == 200) {
+      print("LabelData added successfully");
+    } else {
+      print("Failed to add LabelData. Status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+    }
+  }
   Future<void> addLabelData() async {
     final url = 'https://grozziie.zjweiting.com:8033/tht/allLabelData/add';
     final headers = {'Content-Type': 'application/json'};
@@ -536,6 +581,7 @@ print(' Jason Vaolue  $jsonString');
   void init() async {
     try {
       //await addCategory22("Tamim");
+      await addLabelData222();
      // await addCategory("11","AAAAA","Ekdala");
       await  fetchLabelDataBySubCategory23("Ekdala");
      print('Category added successfully');
