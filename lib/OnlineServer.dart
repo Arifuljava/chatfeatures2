@@ -581,7 +581,7 @@ print(' Jason Vaolue  $jsonString');
   void init() async {
     try {
       //await addCategory22("Tamim");
-      await addLabelData222();
+     // await addLabelData222();
      // await addCategory("11","AAAAA","Ekdala");
       await  fetchLabelDataBySubCategory23("Ekdala");
      print('Category added successfully');
