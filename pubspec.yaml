@@ -42,6 +42,15 @@ dev_dependencies:
   http:
   sqflite:
   floor:
+  web_socket_channel:
+  web_socket_client:
+  web_socket_channel_connect:
+  flutter_web_socket:
+  path_provider:
+  image_picker:
+  shelf_plus:
+  fluttertoast: ^8.2.2
+
 
 
   # The "flutter_lints" package below contains a set of recommended lints to

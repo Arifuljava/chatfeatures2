@@ -29,7 +29,7 @@ databaseHelper=DatabaseHelper.instance;
 print("INI");
   }
   Future<void> loadImageAndConvert() async {
-    Uint8List imageBytes = await loadImageBytes('assets/images/businessman.png');
+    Uint8List imageBytes = await loadImageBytes('assets/images/birthday.png');
     setState(() {
       _imageBytes = imageBytes;
     });
@@ -68,7 +68,7 @@ print("INI");
               height: 250,
               width: 250,
               child: Image.asset(
-                'assets/images/businessman.png',
+                'assets/images/birthday.png',
               ),
 
             ),
