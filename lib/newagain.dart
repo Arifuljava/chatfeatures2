@@ -16,30 +16,35 @@ void onConnect(StompFrame frame) {
       print("List");
       print(frame);
       final Map<String, dynamic> responseBody = json.decode(frame.body!);
+      print(responseBody['messageId']);
       final chatModel = ChatModel.fromJson(responseBody);
 
-      print(chatModel);
+      print(responseBody);
       //List<dynamic>? result = json.decode(frame.body!);
 
      // print(result);
     },
   );
+
+}
+void  sendMessage(String  message){
   final Map<String, dynamic> messageData = {
     "chatId": 4,
     "sentBy": "3",
     "sentTo": "2",
-    "message": "sendmessage",
+    "message": message,
     "msgType": "sender",
     "timestmp": "2023-08-31T08:11:05.814+00:00"
   };
+  stompClient.send(
+    destination: '/app/hello',
+    body: json.encode(messageData),
+  );
+  print("Message  Send");
   Timer.periodic(Duration(seconds: 10), (_) {
-    stompClient.send(
-      destination: '/app/hello',
-      body: json.encode(messageData),
-    );
+
   });
 }
-
 final stompClient = StompClient(
   config: StompConfig(
     url: 'ws://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/gs-guide-websocket',

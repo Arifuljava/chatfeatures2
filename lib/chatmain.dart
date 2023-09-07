@@ -536,6 +536,14 @@ Future<void> fetchLabelDataBySubCategory23() async {
  */
 
 import 'dart:io';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:chatfeatures/newagain.dart';
 
 import 'package:chatfeatures/pictureandothers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -569,8 +577,9 @@ class _chatmainState extends State<chatmain> {
   void initState() {
     // TODO: implement initState
     setState(() {
-      int_loadData();
+      //int_loadData();
     });
+    stompClient.activate();
     super.initState();
   }
 
@@ -823,8 +832,16 @@ return  await backgooo(context);
                           setState(() async{
                             print("NON Empty");
 
-                            await sendChatMessage2222(message_tobesend.toString());
+                         //  await sendChatMessage2222(message_tobesend.toString());
+                            sendMessage(message_tobesend.toString());
                             FocusScope.of(context).unfocus();
+                            final random = Random();
+                            int randomNumber = random.nextInt(100);
+                            ChatModel chatmodel = new ChatModel(messageId:randomNumber,chatId: 4,sentBy: "3",sentTo: "2",message: message_tobesend.toString(),
+                            msgType: "sender",timestmp:"2023-08-31T08:11:05.814+00:00",serverTimestmp: "2023-08-31T08:11:05.814+00:00" );
+                            setState(() {
+                              messages22.add(chatmodel);
+                            });
                             textMessage.text = "";
                           });
                         }

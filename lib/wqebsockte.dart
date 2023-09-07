@@ -144,7 +144,18 @@ void get(){
                 ),
                 IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: _controller.text.isEmpty ? null : _sendMessage,
+                  onPressed: (){
+                    if(_controller.text.isEmpty)
+                      {
+                        print("Enter Message");
+
+                      }
+                    else
+                      {
+                        sendMessage(_controller.text.toString());
+                      }
+
+                  },
                 ),
               ],
             ),
