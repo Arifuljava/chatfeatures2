@@ -539,7 +539,9 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
@@ -563,6 +565,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:circular_image/circular_image.dart';
 
 class chatmain extends StatefulWidget {
   const chatmain({super.key});
@@ -577,7 +580,7 @@ class _chatmainState extends State<chatmain> {
   void initState() {
     // TODO: implement initState
     setState(() {
-      //int_loadData();
+      int_loadData();
     });
     stompClient.activate();
     super.initState();
@@ -585,19 +588,45 @@ class _chatmainState extends State<chatmain> {
 
   //for image
   File? _imageFile;
+  Uint8List? _imagebit; 
 
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
+    final imageBytes = await pickedFile?.readAsBytes();
+    print(imageBytes);
     setState(() {
-      if (pickedFile != null) {
+      if (pickedFile != null)  {
         _imageFile = File(pickedFile.path);
-        print(_imageFile);
+
+
+        get_binary(_imageFile.toString());
+
       } else {
         print('No image selected.');
       }
     });
+  }
+  Future<Uint8List?> loadImageBytes(String imagePath) async {
+    try {
+      // Create a File object from the image path
+      File imageFile = File(imagePath);
+
+      // Check if the file exists
+      if (await imageFile.exists()) {
+        // Read the image file as bytes
+        Uint8List imageBytes = await imageFile.readAsBytes();
+        return imageBytes;
+      } else {
+        // Handle the case where the file doesn't exist
+        print('Image file does not exist: $imagePath');
+        return null; // or throw an exception
+      }
+    } catch (e) {
+      // Handle any errors that may occur during file reading
+      print('Error loading image: $e');
+      return null; // or throw an exception
+    }
   }
   void showCustomBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -683,7 +712,7 @@ return  await backgooo(context);
         appBar: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.lightBlue,
           flexibleSpace: SafeArea(
             child: Container(
               padding: EdgeInsets.only(right: 16),
@@ -693,13 +722,10 @@ return  await backgooo(context);
                     onPressed: (){
                       Navigator.pop(context);
                     },
-                    icon: Icon(Icons.arrow_back,color: Colors.black,),
+                    icon: Icon(Icons.arrow_back,color: Colors.white,),
                   ),
                   SizedBox(width: 2,),
-                  CircleAvatar(
-                    backgroundImage: NetworkImage("<https://randomuser.me/api/portraits/men/5.jpg>"),
-                    maxRadius: 20,
-                  ),
+                  CircularImage(source: 'https://senzary.com/wp-content/uploads/2019/01/person2.jpg',radius: 20,),
                   SizedBox(width: 12,),
                   Expanded(
                     child: Column(
@@ -829,7 +855,7 @@ return  await backgooo(context);
                         }
                         else
                         {
-                          setState(() async{
+                          setState(() {
                             print("NON Empty");
 
                          //  await sendChatMessage2222(message_tobesend.toString());
@@ -961,6 +987,21 @@ return  await backgooo(context);
       print(" Status code: ${response.statusCode}");
       print("Response body: ${response.body}");
     }
+  }
+  Future<Uint8List?> loadImageByteaas(String imagePath) async {
+    try {
+      ByteData data = await rootBundle.load(imagePath);
+      return data.buffer.asUint8List();
+    } catch (e) {
+      print('Error loading image: $e');
+      return null; // or throw an exception
+    }
+  }
+  void get_binary(String filtpath) async{
+    await loadImageBytes(filtpath);
+   // Uint8List imageBytes = await File(filtpath).readAsBytes();
+ await loadImageByteaas(filtpath);
+
   }
 }
 /*
