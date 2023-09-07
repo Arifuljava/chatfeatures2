@@ -13,16 +13,11 @@ void onConnect(StompFrame frame) {
   stompClient.subscribe(
     destination: '/topic/greetings',
     callback: (frame) {
-      print("List");
-      print(frame);
       final Map<String, dynamic> responseBody = json.decode(frame.body!);
-      print(responseBody['messageId']);
-      final chatModel = ChatModel.fromJson(responseBody);
+      final labelDataListData = responseBody['body'];
+      final chatModel = ChatModel.fromJson(labelDataListData);
+      print(chatModel);
 
-      print(responseBody);
-      //List<dynamic>? result = json.decode(frame.body!);
-
-     // print(result);
     },
   );
 

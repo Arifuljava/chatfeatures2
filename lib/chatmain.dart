@@ -576,16 +576,26 @@ class chatmain extends StatefulWidget {
 
 String itemmm = "A203";
 class _chatmainState extends State<chatmain> {
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     // TODO: implement initState
     setState(() {
-      int_loadData();
+      int_loadData(); WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _scrollToLastMessage();
+      });
+
     });
     stompClient.activate();
+    // Scroll to the last message when the widget is initialized
+
     super.initState();
   }
-
+  void _scrollToLastMessage() {
+    if (messages22.isNotEmpty) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
   //for image
   File? _imageFile;
   Uint8List? _imagebit; 
@@ -751,32 +761,11 @@ return  await backgooo(context);
         ),
         body: Stack(
           children: <Widget>[
-            /*
-              ListView.builder(
-              itemCount: messages22.length,
-              shrinkWrap: true,
-              padding: EdgeInsets.only(top: 10,bottom: 10),
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index){
-                return Container(
-                  padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
-                  child: Align(
-                    alignment: (messages22[index].msgType == "receiver"?Alignment.topLeft:Alignment.topRight),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: (messages22[index].msgType  == "receiver"?Colors.grey.shade200:Colors.blue[200]),
-                      ),
-                      padding: EdgeInsets.all(16),
-                      child: Text(messages22[index].message.toString(), style: TextStyle(fontSize: 15),),
-                    ),
-                  ),
-                );
-              },
-            )
-             */
+
             SingleChildScrollView(
               child: ListView.builder(
+                key: UniqueKey(),
+                controller: _scrollController,
                 itemCount: messages22.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 10, bottom: 50),
