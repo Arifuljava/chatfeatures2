@@ -50,6 +50,7 @@ dev_dependencies:
   image_picker:
   shelf_plus:
   fluttertoast: ^8.2.2
+  stomp_dart_client: ^0.4.4
 
 
 

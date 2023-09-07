@@ -25,7 +25,10 @@ class _websockettestState extends State<websockettest> {
     // TODO: implement initState
     super.initState();
     final channel = WebSocketChannel.connect(
-      Uri.parse('wss://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/websocket/group/public'),
+      Uri.parse('wss://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/gs-guide-websocket'),
+    );
+    final channel1 = WebSocketChannel.connect(
+      Uri.parse('wss://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/gs-guide-websocket/app/hello'),
     );
   }
 
@@ -56,9 +59,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
   final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/websocket/group/public'),
+    Uri.parse('wss://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/gs-guide-websocket'),
   );
-
+  final channel1 = WebSocketChannel.connect(
+    Uri.parse('wss://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/gs-guide-websocket/app/hello'),
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 24),
             StreamBuilder(
-              stream: _channel.stream,
+              stream: channel1.stream,
               builder: (context, snapshot) {
                 return Text(snapshot.hasData ? '${snapshot.data}' : '');
               },
@@ -96,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      _channel.sink.add(_controller.text);
+      channel1.sink.add(_controller.text);
       print("Data is send");
     }
     else{
@@ -106,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    _channel.sink.close();
+    channel1.sink.close();
     _controller.dispose();
     super.dispose();
   }
