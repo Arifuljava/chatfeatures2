@@ -577,20 +577,72 @@ class chatmain extends StatefulWidget {
 String itemmm = "A203";
 class _chatmainState extends State<chatmain> {
   List<ChatModel> messages22 = [];
-  final ScrollController _scrollController = ScrollController();
+ // final ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController();
+
+  bool _isLoading = false; // Flag to prevent multiple load requests
+
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+  String current_date = '';
+  DateTime now = DateTime.now();
   @override
   void initState() {
     // TODO: implement initState
+    int year = now.year;
+    int  month = now.month;
+    int day = now.day;
+    int  hour = now.hour;
+    int min = now.minute;
+    int second = now.second;
+
+    current_date = '$hour:$min:$second ,$day/$month/$year';
+    print(current_date);
+    print(now);
     setState(() {
-      int_loadData(); WidgetsBinding.instance!.addPostFrameCallback((_) {
-        _scrollToLastMessage();
-      });
+
+      int_loadData();
+
+
 
     });
     stompClient.activate();
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollToBottom());
     // Scroll to the last message when the widget is initialized
-
+    _scrollController.addListener(_scrollListener);
     super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
+  }
+  void _scrollListener() {
+    if (_scrollController.position.atEdge && !_isLoading) {
+      // User has reached the top of the list
+      if (_scrollController.position.pixels == 0) {
+        setState(() {
+          _isLoading = true;
+        });
+
+        // Fetch older messages from the server here
+        // Update your messages22 list with the new messages
+
+        // After updating the list, you can scroll to the last message
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
   void _scrollToLastMessage() {
     if (messages22.isNotEmpty) {
@@ -850,7 +902,7 @@ return  await backgooo(context);
                             print("NON Empty");
 
                          //  await sendChatMessage2222(message_tobesend.toString());
-                            sendMessage(message_tobesend.toString());
+                        sendMessage(message_tobesend.toString());
                             FocusScope.of(context).unfocus();
                             final random = Random();
                             int randomNumber = random.nextInt(100);
@@ -859,12 +911,14 @@ return  await backgooo(context);
                             // Convert milliseconds to seconds
                             int currentTimeInSeconds = currentTimeInMillis ~/ 1000;
                             ChatModel chatmodel = new ChatModel(messageId:randomNumber,chatId: 4,sentBy: "3",sentTo: "2",message: message_tobesend.toString(),
-                            msgType: "sender",timestmp:"2023-08-31T08:11:05.814+00:00",serverTimestmp: currentTimeInSeconds.toString() );
+                            msgType: "sender",timestmp:current_date,serverTimestmp: currentTimeInSeconds.toString() );
+
                             setState(() {
                               messages22.add(chatmodel);
                             });
                             textMessage.text = "";
                             showMyToast("Message Send");
+                            _scrollToBottom();
                           });
                         }
 

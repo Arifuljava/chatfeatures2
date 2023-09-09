@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:chatfeatures/chatModel.dart';
 import 'package:stomp_dart_client/stomp.dart';
@@ -24,22 +25,36 @@ void onConnect(StompFrame frame) {
 
 }
 void  sendMessage(String  message){
+
+  String current_date = '';
+  DateTime now = DateTime.now();
+  final random = Random();
+  int randomNumber = random.nextInt(100);
+  int currentTimeInMillis = DateTime.now().millisecondsSinceEpoch;
+  int year = now.year;
+  int  month = now.month;
+  int day = now.day;
+  int  hour = now.hour;
+  int min = now.minute;
+  int second = now.second;
+
+  current_date = '$hour:$min:$second ,$day/$month/$year';
+  // Convert milliseconds to seconds
+  int currentTimeInSeconds = currentTimeInMillis ~/ 1000;
   final Map<String, dynamic> messageData = {
     "chatId": 4,
     "sentBy": "3",
     "sentTo": "2",
     "message": message,
     "msgType": "sender",
-    "timestmp": "2023-08-31T08:11:05.814+00:00"
+    "timestmp": current_date,
   };
   stompClient.send(
     destination: '/app/hello',
     body: json.encode(messageData),
   );
   print("Message  Send");
-  Timer.periodic(Duration(seconds: 10), (_) {
 
-  });
 }
 final stompClient = StompClient(
   config: StompConfig(
