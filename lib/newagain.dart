@@ -7,6 +7,7 @@ import 'package:chatfeatures/chatModel.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:chatfeatures/chatmain.dart';
 
 void onConnect(StompFrame frame) {
   print("Connected");

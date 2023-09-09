@@ -576,6 +576,7 @@ class chatmain extends StatefulWidget {
 
 String itemmm = "A203";
 class _chatmainState extends State<chatmain> {
+  List<ChatModel> messages22 = [];
   final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
@@ -604,6 +605,7 @@ class _chatmainState extends State<chatmain> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     final imageBytes = await pickedFile?.readAsBytes();
+
     print(imageBytes);
     setState(() {
       if (pickedFile != null)  {
@@ -852,12 +854,17 @@ return  await backgooo(context);
                             FocusScope.of(context).unfocus();
                             final random = Random();
                             int randomNumber = random.nextInt(100);
+                            int currentTimeInMillis = DateTime.now().millisecondsSinceEpoch;
+
+                            // Convert milliseconds to seconds
+                            int currentTimeInSeconds = currentTimeInMillis ~/ 1000;
                             ChatModel chatmodel = new ChatModel(messageId:randomNumber,chatId: 4,sentBy: "3",sentTo: "2",message: message_tobesend.toString(),
-                            msgType: "sender",timestmp:"2023-08-31T08:11:05.814+00:00",serverTimestmp: "2023-08-31T08:11:05.814+00:00" );
+                            msgType: "sender",timestmp:"2023-08-31T08:11:05.814+00:00",serverTimestmp: currentTimeInSeconds.toString() );
                             setState(() {
                               messages22.add(chatmodel);
                             });
                             textMessage.text = "";
+                            showMyToast("Message Send");
                           });
                         }
 
@@ -955,7 +962,7 @@ return  await backgooo(context);
   void int_loadData() async{
     await fetchLabelDataBySubCategory23();
   }
-  List<ChatModel> messages22 = [];
+
   Future<void> fetchLabelDataBySubCategory23() async {
     final url =
         'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/4';
