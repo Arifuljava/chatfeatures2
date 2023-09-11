@@ -13,7 +13,7 @@ import 'package:chatfeatures/chatmain.dart';
 void onConnect(StompFrame frame) {
   print("Connected");
   stompClient.subscribe(
-    destination: '/topic/greetings',
+    destination: '/topic/2',
     callback: (frame) {
       final Map<String, dynamic> responseBody = json.decode(frame.body!);
       final labelDataListData = responseBody['body'];
@@ -25,6 +25,7 @@ void onConnect(StompFrame frame) {
 
 }
 void  sendMessage(String  message){
+
 
   String current_date = '';
   DateTime now = DateTime.now();
@@ -50,7 +51,7 @@ void  sendMessage(String  message){
     "timestmp": current_date,
   };
   stompClient.send(
-    destination: '/app/hello',
+    destination: '/app/messages',
     body: json.encode(messageData),
   );
   print("Message  Send");
@@ -58,14 +59,18 @@ void  sendMessage(String  message){
 }
 final stompClient = StompClient(
   config: StompConfig(
-    url: 'ws://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/gs-guide-websocket',
+    url: 'ws://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/websocket',
     onConnect: onConnect,
     beforeConnect: () async {
       print('waiting to connect...');
       await Future.delayed(Duration(milliseconds: 200));
       print('connecting...');
     },
-    onWebSocketError: (dynamic error) => print(error.toString()),
+    onWebSocketError: (dynamic error) => print("Closed $error"),
+    onStompError: (StompFrame frame)
+    {
+      print("Stomp Error");
+    },
     stompConnectHeaders: {'Authorization': 'Bearer yourToken'},
     webSocketConnectHeaders: {'Authorization': 'Bearer yourToken'},
   ),

@@ -26,6 +26,7 @@ class _imagetobinaryState extends State<imagetobinary> {
   void initState() {
     super.initState();
 databaseHelper=DatabaseHelper.instance;
+//getAllImage();
 print("INI");
   }
   Future<void> loadImageAndConvert() async {
@@ -81,6 +82,7 @@ print("INI");
                 _imageList = imageList;
 
               });
+
               print(_imageList);
 
 
@@ -97,6 +99,17 @@ print("INI");
         ),
       ),
     );
+  }
+
+  void getAllImage() async{
+    List<Map<String, dynamic>> imageList =
+    await DatabaseHelper.instance.getImages();
+    setState(() {
+      _imageList = imageList;
+
+    });
+print("Arif");
+    print(_imageList);
   }
 }
 class DatabaseHelper {
@@ -144,7 +157,7 @@ class DatabaseHelper {
       {'image': imageBytes, 'binaryString': binaryString},
     );
 
-    print("Added");
+    print("Added$imageBytes");
   }
 
   Future<List<Map<String, dynamic>>> getImages() async {

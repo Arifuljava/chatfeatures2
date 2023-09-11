@@ -581,7 +581,16 @@ class _chatmainState extends State<chatmain> {
   ScrollController _scrollController = ScrollController();
 
   bool _isLoading = false; // Flag to prevent multiple load requests
+  ScrollController scrollController = ScrollController();
 
+  Future<void> scrollAnimation() async {
+    return await Future.delayed(
+        const Duration(milliseconds: 100),
+            () => scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.linear));
+  }
 
   void _scrollToBottom() {
     _scrollController.animateTo(
@@ -602,21 +611,24 @@ class _chatmainState extends State<chatmain> {
     int min = now.minute;
     int second = now.second;
 
-    current_date = '$hour:$min:$second ,$day/$month/$year';
+    current_date = '$hour:$min:$second,$day/$month/$year';
     print(current_date);
     print(now);
     setState(() {
 
       int_loadData();
-
+      inSro();
 
 
     });
     stompClient.activate();
-    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollToBottom());
+   // WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollToBottom());
     // Scroll to the last message when the widget is initialized
-    _scrollController.addListener(_scrollListener);
+    //_scrollController.addListener(_scrollListener);
     super.initState();
+  }
+  void inSro() async{
+  await  scrollAnimation();
   }
   @override
   void dispose() {
@@ -716,6 +728,16 @@ class _chatmainState extends State<chatmain> {
       ],
     );
   }
+  Future<File?> pickVideoFromGallery() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      print(File(pickedFile.path));
+      return File(pickedFile.path);
+    } else {
+      return null;
+    }
+  }
   Widget _buildOption(BuildContext context, String text, IconData icon) {
     return Expanded(
       child: InkWell(
@@ -728,7 +750,9 @@ class _chatmainState extends State<chatmain> {
           }
           else if(text=="Select Video")
           {
+            await  pickVideoFromGallery();
             print(text);
+
           }
           else if(text=="Voice")
           {
@@ -823,7 +847,7 @@ return  await backgooo(context);
                 itemCount: messages22.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 10, bottom: 50),
-                physics: NeverScrollableScrollPhysics(),
+                physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Container(
                     padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
@@ -901,8 +925,9 @@ return  await backgooo(context);
                           setState(() {
                             print("NON Empty");
 
-                         //  await sendChatMessage2222(message_tobesend.toString());
+                   //await sendChatMessage2222(message_tobesend.toString());
                         sendMessage(message_tobesend.toString());
+                        //_scrollToBottom();
                             FocusScope.of(context).unfocus();
                             final random = Random();
                             int randomNumber = random.nextInt(100);
@@ -918,7 +943,7 @@ return  await backgooo(context);
                             });
                             textMessage.text = "";
                             showMyToast("Message Send");
-                            _scrollToBottom();
+
                           });
                         }
 
