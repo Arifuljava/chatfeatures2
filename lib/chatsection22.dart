@@ -29,7 +29,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:circular_image/circular_image.dart';
-
+import 'package:image/image.dart' as img;
+//for image
+late Uint8List uint8List3333 ;
 class ChatSection extends StatefulWidget {
   const ChatSection({super.key});
 
@@ -38,8 +40,10 @@ class ChatSection extends StatefulWidget {
 }
 
 String itemmm = "A203";
+
 class chatmainState extends State<ChatSection> {
   List<ChatModel> messages22 = [];
+  late Uint8List uint8List;
  // final ScrollController _scrollController = ScrollController();
   ScrollController _scrollController = ScrollController();
 
@@ -105,25 +109,41 @@ class chatmainState extends State<ChatSection> {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
-  //for image
-  File? _imageFile;
-  Uint8List? _imagebit; 
 
+  File? _imageFile;
+  Uint8List? _imagebit;
+  String base64String = '';
+  Uint64List convertToUint64List(Uint8List uint8List) {
+    final uint64List = Uint64List(uint8List.length ~/ 8); // Create a Uint64List with appropriate length
+    for (int i = 0; i < uint8List.length; i += 8) {
+      final bytes = Uint8List.fromList(uint8List.sublist(i, i + 8));
+      final uint64Value = ByteData.sublistView(bytes).getUint64(0, Endian.little);
+      uint64List[i ~/ 8] = uint64Value;
+    }
+    return uint64List;
+  }
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     final imageBytes = await pickedFile?.readAsBytes();
+
     String base64String = base64Encode(imageBytes!);
-    List<int> decodedBytes = base64Decode(base64String);
-    await sendChatMessage2222(base64String.toString());
+    base64String = base64.normalize(base64String);
     print(imageBytes);
-    print(base64String);
-    print(decodedBytes);
+    print(base64String.length);
+ sendMessage(base64String);
+
+
+   // await sendChatMessage2222(base64String.toString());
+    //print(imageBytes);
+ //   print(base64String);
+
+ print(uint8List3333);
     setState(() {
       if (pickedFile != null)  {
         _imageFile = File(pickedFile.path);
 
-
+      //  uint8List3333 = Uint8List.fromList(decodedBytes);
         get_binary(_imageFile.toString());
 
       } else {
@@ -311,9 +331,15 @@ return  await backgooo(context);
                               : Colors.blue[200]),
                         ),
                         padding: EdgeInsets.all(16),
-                        child: Text(
-                          messages22[index].message.toString(),
-                          style: TextStyle(fontSize: 15),
+
+                        child: Container(
+                          width: 200, // Set your desired width here
+                          height: 200, // Set your desired height here
+                          child: Text(
+                              messages22[index].message.toString()
+                          )
+
+
                         ),
                       ),
                     ),
@@ -370,12 +396,12 @@ return  await backgooo(context);
                         }
                         else
                         {
-                          await sendChatMessage2222(message_tobesend.toString());
+                         // await sendChatMessage2222(message_tobesend.toString());
                           setState(() {
                             print("NON Empty");
 
                    //
-                        sendMessage(message_tobesend.toString());
+                        sendMessage(base64String.toString());
                         //_scrollToBottom();
                             FocusScope.of(context).unfocus();
                             final random = Random();
@@ -438,7 +464,7 @@ return  await backgooo(context);
 
   }
   Future<void> sendChatMessage2222(String sendmessage) async {
-    final url = 'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages'; // Replace with your API URL
+    final url = 'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/4'; // Replace with your API URL
 
     final Map<String, dynamic> messageData = {
       "chatId": 4,
@@ -506,8 +532,13 @@ print(jsonBody);
   void int_loadData() async{
     await fetchLabelDataBySubCategory23();
   }
+  //late List<int> decodedBytes;
+  List<Uint8List> uint8ListList = [];
+  late   Uint8List uint8List22  ;
 
   Future<void> fetchLabelDataBySubCategory23() async {
+    // List<int> decodedBytes = base64Decode(base64String);
+    print("CCCCCC");
     final url =
         'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/4';
 
@@ -520,6 +551,26 @@ print(jsonBody);
         for (var item in labelDataList) {
           final chatModel = ChatModel.fromJson(item);
           messages22.add(chatModel);
+          print(chatModel.message?.length);
+        /*
+          String? encodedString =chatModel.message?.toString();
+          List<int> decodedBytes = base64Decode(encodedString!);
+          uint8List3333 = Uint8List.fromList(decodedBytes);
+          print("GetData");
+          print(uint8List3333);
+         */
+
+        // String paddedMessage = chatModel.message.toString();
+        /*
+          while (paddedMessage.length % 4 != 0) {
+            paddedMessage += '=';
+          }
+         */
+           //uint8List = Uint8List.fromList(base64Decode(paddedMessage));
+
+          //uint8ListList.add(uint8List);
+         // print("Connected22");
+           print(messages22);
         }
       });
       print(messages22);

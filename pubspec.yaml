@@ -42,6 +42,7 @@ dev_dependencies:
   http:
   sqflite:
   floor:
+  image:
   web_socket_channel:
   web_socket_client:
   web_socket_channel_connect:

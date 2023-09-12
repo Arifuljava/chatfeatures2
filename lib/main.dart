@@ -14,6 +14,7 @@ import 'package:chatfeatures/recentsqllite.dart';
 import 'package:chatfeatures/scrolldowntest.dart';
 import 'package:chatfeatures/seconddatabase.dart';
 import 'package:chatfeatures/socket2.dart';
+import 'package:chatfeatures/testing.dart';
 import 'package:chatfeatures/uuidStore.dart';
 import 'package:chatfeatures/videoconvert.dart';
 import 'package:chatfeatures/websockettest.dart';
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ChatSection(),
+      home: Testing(),
     );
   }
 }
