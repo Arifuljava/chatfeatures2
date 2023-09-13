@@ -32,6 +32,7 @@ import 'package:circular_image/circular_image.dart';
 import 'package:image/image.dart' as img;
 //for image
 late Uint8List uint8List3333 ;
+late Uint8List bytesAngenl;
 class ChatSection extends StatefulWidget {
   const ChatSection({super.key});
 
@@ -42,6 +43,8 @@ class ChatSection extends StatefulWidget {
 String itemmm = "A203";
 
 class chatmainState extends State<ChatSection> {
+  final StreamController<List<ChatModel>> _listStreamController =
+  StreamController<List<ChatModel>>.broadcast();
   List<ChatModel> messages22 = [];
   late Uint8List uint8List;
  // final ScrollController _scrollController = ScrollController();
@@ -82,6 +85,7 @@ class chatmainState extends State<ChatSection> {
     print(current_date);
     print(now);
     setState(() {
+      streamData();
 
       int_loadData();
       inSro();
@@ -94,13 +98,33 @@ class chatmainState extends State<ChatSection> {
     //_scrollController.addListener(_scrollListener);
     super.initState();
   }
+  late Stream<ChatModel> _listRefreshStream;
+  void streamData(){
+    // Create a custom stream that emits an event every second
+    _listStreamController.stream.listen((updatedList) {
+      setState(() {
+        messages22 = updatedList;
+      });
+    });
+  }
   void inSro() async{
   await  scrollAnimation();
+  }
+  Future<void> loadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final imageBytes = await pickedFile.readAsBytes();
+
+
+    }
   }
   @override
   void dispose() {
     // TODO: implement dispose
     _scrollController.dispose();
+    _listStreamController.close();
     super.dispose();
   }
 
@@ -332,12 +356,10 @@ return  await backgooo(context);
                         ),
                         padding: EdgeInsets.all(16),
 
-                        child: Container(
-                          width: 200, // Set your desired width here
-                          height: 200, // Set your desired height here
-                          child: Text(
-                              messages22[index].message.toString()
-                          )
+                        child: Text(
+                          messages22[index].message.toString(),
+                          style: TextStyle(fontSize: 15),
+
 
 
                         ),
@@ -401,7 +423,7 @@ return  await backgooo(context);
                             print("NON Empty");
 
                    //
-                        sendMessage(base64String.toString());
+                        sendMessage(message_tobesend.toString());
                         //_scrollToBottom();
                             FocusScope.of(context).unfocus();
                             final random = Random();
@@ -551,6 +573,7 @@ print(jsonBody);
         for (var item in labelDataList) {
           final chatModel = ChatModel.fromJson(item);
           messages22.add(chatModel);
+         //bytesAngenl= base64Decode(chatModel.message.toString());
           print(chatModel.message?.length);
         /*
           String? encodedString =chatModel.message?.toString();

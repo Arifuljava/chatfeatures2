@@ -30,6 +30,13 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:circular_image/circular_image.dart';
 import 'package:image/image.dart' as img;
+import 'package:flutter/services.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:chatfeatures/newagain.dart';
+
+
 
 
 class Testing extends StatefulWidget {
@@ -41,9 +48,11 @@ class Testing extends StatefulWidget {
 late Uint8List uint8List;
 class _TestingState extends State<Testing> {
   Uint8List? imageBytes;
+  bool FlagAngenl=false;
+  late Uint8List bytesAngenl;
  // String based = "/9j/4RYLRXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABABAgAgAAAAGgEAABIBAwABAAAAAQAAABoBBQABAAAAOgEAABsBBQABAAAAQgEAACgBAwABAAAAAgAAADEBAgAgAAAASgEAADIBAgAUAAAAagEAABMCAwABAAAAAgAAACACBAABAAAAAAAAACECBAABAAAAAAAAACICBAABAAAAAAAAACMCBAABAAAAAAAAACQCBAABAAAAAQAAACUCAgAgAAAAfgEAAGmHBAABAAAAngEAACADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADVHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANUcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAQAAAEgAAAABAAAATWVkaWFUZWsgQ2FtZXJhIEFwcGxpY2F0aW9uAAAAAAAyMDIzOjA4OjI3IDA1OjM1OjE0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGQCaggUAAQAAANACAACdggUAAQAAANgCAAAiiAMAAQAAAAAAAAAniAMAAQAAALYCAAAAkAcABAAAADAyMjADkAIAFAAAAOACAAAEkAIAFAAAAPQCAAABkQcABAAAAAECAwAEkgoAAQAAAAgDAAAHkgMAAQAAAAIAAAAIkgMAAQAAAP8AAAAJkgMAAQAAAAEAAAAKkgUAAQAAABADAACQkgIAAgAAADUyAACRkgIAAgAAADUyAACSkgIAAgAAADUyAAAAoAcABAAAADAxMDABoAMAAQAAAAEAAAACoAQAAQAAAJAHAAADoAQAAQAAACAKAAAFoAQAAQAAAJYDAAACpAMAAQAAAAAAAAADpAMAAQAAAAAAAAAEpAUAAQAAABgDAAAGpAMAAQAAAAAAAAAAAAAA0AEBAEBCDwAYAAAACgAAADIwMjM6MDg6";
 String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABABAgAgAAAAGgEAABIBAwABAAAAAQAAABoBBQABAAAAOgEAABsBBQABAAAAQgEAACgBAwABAAAAAgAAADEBAgAgAAAASgEAADIBAgAUAAAAagEAABMCAwABAAAAAgAAACACBAABAAAAAAAAACECBAABAAAAAAAAACICBAABAAAAAAAAACMCBAABAAAAAAAAACQCBAABAAAAAQAAACUCAgAgAAAAfgEAAGmHBAABAAAAngEAACADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADVHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANUcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAQAAAEgAAAABAAAATWVkaWFUZWsgQ2FtZXJhIEFwcGxpY2F0aW9uAAAAAAAyMDIzOjA4OjAzIDE5OjAwOjU5AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGQCaggUAAQAAANACAACdggUAAQAAANgCAAAiiAMAAQAAAAAAAAAniAMAAQAAAEwAAAAAkAcABAAAADAyMjADkAIAFAAAAOACAAAEkAIAFAAAAPQCAAABkQcABAAAAAECAwAEkgoAAQAAAAgDAAAHkgMAAQAAAAIAAAAIkgMAAQAAAP8AAAAJkgMAAQAAAAEAAAAKkgUAAQAAABADAACQkgIAAgAAADg2AACRkgIAAgAAADg2AACSkgIAAgAAADg2AAAAoAcABAAAADAxMDABoAMAAQAAAAEAAAACoAQAAQAAAJAHAAADoAQAAQAAACAKAAAFoAQAAQAAAJYDAAACpAMAAQAAAAAAAAADpAMAAQAAAAAAAAAEpAUAAQAAABgDAAAGpAMAAQAAAAAAAAAAAAAAVuoAAEBCDwAYAAAACgAAADIwMjM6MDg6";
-
+String base64StringAngenl="";
 
   Future<void> loadImage() async {
     final picker = ImagePicker();
@@ -54,6 +63,7 @@ String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABAB
 
       setState(() {
         this.imageBytes = imageBytes;
+
       });
     }
   }
@@ -62,6 +72,13 @@ String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABAB
     String base64String = base64Encode(imageBytes);
     return base64String;
   }
+  String imageToBase64(imageBytes){
+    // Read the image file as bytes
+    String base64String = base64Encode(imageBytes);
+
+    return base64String;
+  }
+
  /*
   Uint8List? convertBase64ToUint8List(String base64String) {
     List<int> decodedBytes = base64Decode(base64String);
@@ -87,7 +104,9 @@ String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABAB
     convertBase64ToUint8List(based);
     setState(() {
       this.imageBytes = convertBase64ToUint8List(based);
+      stompClient.activate();
     });
+
 
   }
   @override
@@ -101,13 +120,16 @@ String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABAB
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (imageBytes != null)
-                Image.memory(
-                  imageBytes!,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
+              if(FlagAngenl)
+                  Image.memory(
+                    bytesAngenl,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+
+
+
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: loadImage,
@@ -117,8 +139,14 @@ String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABAB
               if (imageBytes != null)
                 ElevatedButton(
                   onPressed: () {
-                    String base64String = convertImageToBase64(imageBytes!);
-                    print('Base64 String: $base64String');
+                    base64StringAngenl = imageToBase64(imageBytes);//convertImageToBase64(imageBytes!);
+                    FlagAngenl=false;
+
+                    print('Ariful5555555: $imageBytes');
+                   // print('Base64 String: $base64String');
+                    print('Ariful66666666: $base64StringAngenl');
+
+
                   },
                   child: Text('Convert to Base64'),
 
@@ -127,15 +155,24 @@ String based = "/9j/4RG/RXhpZgAASUkqAAgAAAARAA4BAgAgAAAA2gAAAA8BAgAgAAAA+gAAABAB
               ElevatedButton(
                 onPressed: () {
                   // Convert the base64 string to Uint8List
-                  Uint8List? uint8List = convertBase64ToUint8List(based);
-                  print("Based");
-                  print(uint8List);
+
                   setState(() {
-                    imageBytes = uint8List;
+                    bytesAngenl = base64Decode(base64StringAngenl);
+                    FlagAngenl=true;
                   });
+
+                  //Image imageII = Image.memory(bytesII);
+
+
                 },
                 child: Text('Convert Base64 to Uint8List'),
               ),
+              SizedBox(height: 20,),
+              ElevatedButton(onPressed: (){
+                sendMessage(base64StringAngenl.toString());
+              }, child: Text(
+                "Send Message"
+              ))
             ],
           ),
         ),
