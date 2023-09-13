@@ -9,6 +9,7 @@ import 'package:chatfeatures/checkuserexsit.dart';
 import 'package:chatfeatures/flooradd.dart';
 import 'package:chatfeatures/imagetobinary.dart';
 import 'package:chatfeatures/imagetobyteconvert.dart';
+import 'package:chatfeatures/pollingdata.dart';
 import 'package:chatfeatures/recentsectionsqllite.dart';
 import 'package:chatfeatures/recentsqllite.dart';
 import 'package:chatfeatures/scrolldowntest.dart';
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ChatSection(),
+      home: PollingData(),
     );
   }
 }
