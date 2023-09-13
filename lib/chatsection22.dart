@@ -651,7 +651,7 @@ print(jsonBody);
     print("CCCCCC");
   //  bytesAngenl = base64Decode(dddd);
     final url =
-        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/15';
+        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/17';
 
     final response = await http.get(Uri.parse(url));
 
@@ -671,7 +671,7 @@ print(jsonBody);
             bytesAngelList.add(base64Decode(jubayer));
           }
           if(chatModel.sentBy.toString()!= sendBy){
-            bytesAngelList_sender.add(base64Decode(jubayer));
+            bytesAngelList_sender.add(base64Decode(base64StringAngenl));
           }
           else{
 
