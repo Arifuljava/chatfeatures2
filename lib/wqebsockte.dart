@@ -152,7 +152,7 @@ void get(){
                       }
                     else
                       {
-                        sendMessage(_controller.text.toString());
+                        sendMessage(_controller.text.toString(),"text","1","2");
                       }
 
                   },

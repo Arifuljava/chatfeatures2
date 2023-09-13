@@ -157,7 +157,7 @@ String base64StringAngenl="";
                   // Convert the base64 string to Uint8List
 
                   setState(() {
-                    bytesAngenl = base64Decode(base64StringAngenl);
+                    bytesAngenl = base64Decode(jubayer);
                     FlagAngenl=true;
                   });
 
@@ -169,7 +169,7 @@ String base64StringAngenl="";
               ),
               SizedBox(height: 20,),
               ElevatedButton(onPressed: (){
-                sendMessage(base64StringAngenl.toString());
+                sendMessage(base64StringAngenl.toString(),"text","1","2");
               }, child: Text(
                 "Send Message"
               ))

@@ -601,9 +601,16 @@ class _chatmainState extends State<chatmain> {
   }
   String current_date = '';
   DateTime now = DateTime.now();
+  void _startPollingAPI() {
+    // Create a timer to poll the API every 5 seconds (adjust as needed)
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      fetchLabelDataBySubCategory23();
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
+    _startPollingAPI();
     int year = now.year;
     int  month = now.month;
     int day = now.day;
@@ -852,13 +859,13 @@ return  await backgooo(context);
                   return Container(
                     padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
                     child: Align(
-                      alignment: (messages22[index].msgType == "receiver"
+                      alignment: (messages22[index].sentBy == "1"
                           ? Alignment.topLeft
                           : Alignment.topRight),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: (messages22[index].msgType == "receiver"
+                          color: (messages22[index].sentBy == "1"
                               ? Colors.grey.shade200
                               : Colors.blue[200]),
                         ),
@@ -926,7 +933,7 @@ return  await backgooo(context);
                             print("NON Empty");
 
                    //await sendChatMessage2222(message_tobesend.toString());
-                        sendMessage(message_tobesend.toString());
+                        sendMessage(message_tobesend.toString(),"text","1","2");
                         //_scrollToBottom();
                             FocusScope.of(context).unfocus();
                             final random = Random();
@@ -1044,7 +1051,7 @@ return  await backgooo(context);
 
   Future<void> fetchLabelDataBySubCategory23() async {
     final url =
-        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/4';
+        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/2';
 
     final response = await http.get(Uri.parse(url));
 
@@ -1057,7 +1064,7 @@ return  await backgooo(context);
           messages22.add(chatModel);
         }
       });
-      print(messages22);
+      //print(messages22);
     } else {
       print(" Status code: ${response.statusCode}");
       print("Response body: ${response.body}");

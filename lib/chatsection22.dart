@@ -30,9 +30,37 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:circular_image/circular_image.dart';
 import 'package:image/image.dart' as img;
+//base 64
+import 'dart:convert';
+import 'dart:typed_data';
+
+
+
+Future<void> pickImageAndConvertToBase64() async {
+  final picker = ImagePicker();
+  print('image pick $picker');
+  final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+  if (pickedFile != null) {
+    final Uint8List? imageBytes = await pickedFile.readAsBytes();
+    print('Image Memory $imageBytes');
+
+    if (imageBytes != null) {
+      final base64String = base64Encode(imageBytes);
+      print('Base64 String: $base64String');
+      sendMessage(base64String,"image","1","2");
+
+      // You can use the base64String as needed (e.g., send it to an API).
+    }
+  } else {
+    // User canceled image picking.
+  }
+}
 //for image
 late Uint8List uint8List3333 ;
 late Uint8List bytesAngenl;
+ bool angenlFlag_SendImage=false;
+ bool angenlFlag_Image=false;
 class ChatSection extends StatefulWidget {
   const ChatSection({super.key});
 
@@ -41,12 +69,16 @@ class ChatSection extends StatefulWidget {
 }
 
 String itemmm = "A203";
+String sendBy ="1";
 
 class chatmainState extends State<ChatSection> {
   final StreamController<List<ChatModel>> _listStreamController =
   StreamController<List<ChatModel>>.broadcast();
   List<ChatModel> messages22 = [];
   late Uint8List uint8List;
+  late List<Uint8List> bytesAngelList = [];
+  late List<Uint8List> bytesAngelList_sender = [];
+  late int angenl_index=0;
  // final ScrollController _scrollController = ScrollController();
   ScrollController _scrollController = ScrollController();
 
@@ -71,9 +103,16 @@ class chatmainState extends State<ChatSection> {
   }
   String current_date = '';
   DateTime now = DateTime.now();
+  void _startPollingAPI() {
+    // Create a timer to poll the API every 5 seconds (adjust as needed)
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      fetchLabelDataBySubCategory23();
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
+    _startPollingAPI();
     int year = now.year;
     int  month = now.month;
     int day = now.day;
@@ -110,16 +149,7 @@ class chatmainState extends State<ChatSection> {
   void inSro() async{
   await  scrollAnimation();
   }
-  Future<void> loadImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      final imageBytes = await pickedFile.readAsBytes();
-
-
-    }
-  }
   @override
   void dispose() {
     // TODO: implement dispose
@@ -155,7 +185,7 @@ class chatmainState extends State<ChatSection> {
     base64String = base64.normalize(base64String);
     print(imageBytes);
     print(base64String.length);
- sendMessage(base64String);
+ sendMessage(base64String,"image","1","2");
 
 
    // await sendChatMessage2222(base64String.toString());
@@ -230,6 +260,48 @@ class chatmainState extends State<ChatSection> {
       return null;
     }
   }
+  //get image
+  String convertImageToBase64(Uint8List imageBytes) {
+    String base64String = base64Encode(imageBytes);
+    return base64String;
+  }  String imageToBase64(imageBytes){
+    // Read the image file as bytes
+    String base64String = base64Encode(imageBytes);
+
+    return base64String;
+  }
+  String base64StringAngenl="";
+  bool issendImage=false;
+  Future<void> loadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    angenlFlag_Image=false;
+    if (pickedFile != null) {
+      final imageBytes = await pickedFile.readAsBytes();
+      base64StringAngenl = imageToBase64(imageBytes);
+      second_dd=base64StringAngenl;
+
+
+      angenl_index++;
+      print("hahhakhdkahfklashfkasdf");
+      print(bytesAngelList_sender);
+      setState(() {
+        bytesAngelList_sender.add(base64Decode(base64StringAngenl));
+        issendImage=true;
+        angenlFlag_Image=true;
+      });
+
+
+    sendMessage(jubayer,"image","1","2");
+
+     // await sendChatMessage2222(base64StringAngenl);
+print(imageBytes);
+print(base64StringAngenl);
+
+
+    }
+    //Navigator.of(context).pop();
+  }
   Widget _buildOption(BuildContext context, String text, IconData icon) {
     return Expanded(
       child: InkWell(
@@ -238,12 +310,15 @@ class chatmainState extends State<ChatSection> {
           if(text=="Select Image")
           {
             print(text);
-           await _pickImageFromGallery();
+           await loadImage();
+
+
           }
           else if(text=="Select Video")
           {
             await  pickVideoFromGallery();
             print(text);
+
 
           }
           else if(text=="Voice")
@@ -255,7 +330,7 @@ class chatmainState extends State<ChatSection> {
             print(text);
           }
 
-          Navigator.pop(context); // Close the BottomSheetDialog
+          Navigator.of(context).pop();// Close the BottomSheetDialog
         },
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -344,24 +419,39 @@ return  await backgooo(context);
                   return Container(
                     padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
                     child: Align(
-                      alignment: (messages22[index].msgType == "receiver"
+                      alignment: (messages22[index].sentBy != sendBy
                           ? Alignment.topLeft
                           : Alignment.topRight),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: (messages22[index].msgType == "receiver"
+                          color: (messages22[index].sentBy != sendBy
                               ? Colors.grey.shade200
                               : Colors.blue[200]),
                         ),
                         padding: EdgeInsets.all(16),
-
-                        child: Text(
-                          messages22[index].message.toString(),
-                          style: TextStyle(fontSize: 15),
-
-
-
+                        child: Column(
+                          children: [
+                            if (messages22[index].msgType == "text")
+                              Text(
+                                messages22[index].message.toString(),
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            if (messages22[index].msgType == "image" && messages22[index].sentBy != sendBy)
+                              Image.memory(
+                                bytesAngelList[index],
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            if (messages22[index].msgType == "image" && messages22[index].sentBy == sendBy)
+                              Image.memory(
+                                bytesAngelList_sender[index],
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -423,17 +513,27 @@ return  await backgooo(context);
                             print("NON Empty");
 
                    //
-                        sendMessage(message_tobesend.toString());
+                            angenlFlag_Image=false;
+                        sendMessage(message_tobesend.toString(),"text","1","2");
                         //_scrollToBottom();
                             FocusScope.of(context).unfocus();
                             final random = Random();
                             int randomNumber = random.nextInt(100);
                             int currentTimeInMillis = DateTime.now().millisecondsSinceEpoch;
+                            if(issendImage)
+                              {
 
+                              }
+                            else
+                              {
+
+                              }
+
+                            bytesAngelList_sender.add(base64Decode(jubayer));
                             // Convert milliseconds to seconds
                             int currentTimeInSeconds = currentTimeInMillis ~/ 1000;
-                            ChatModel chatmodel = new ChatModel(messageId:randomNumber,chatId: 4,sentBy: "3",sentTo: "2",message: message_tobesend.toString(),
-                            msgType: "sender",timestmp:current_date,serverTimestmp: currentTimeInSeconds.toString() );
+                            ChatModel chatmodel = new ChatModel(messageId:randomNumber,chatId: 2,sentBy: "1",sentTo: "2",message: message_tobesend.toString(),
+                            msgType: "text",timestmp:current_date,serverTimestmp: currentTimeInSeconds.toString() );
 
                             setState(() {
                               messages22.add(chatmodel);
@@ -486,7 +586,7 @@ return  await backgooo(context);
 
   }
   Future<void> sendChatMessage2222(String sendmessage) async {
-    final url = 'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/4'; // Replace with your API URL
+    final url = 'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages'; // Replace with your API URL
 
     final Map<String, dynamic> messageData = {
       "chatId": 4,
@@ -497,7 +597,7 @@ return  await backgooo(context);
       "timestmp": "2023-08-31T08:11:05.814+00:00"
     };
 
-   /*
+
     final headers = {
       'Content-Type': 'application/json', // Set the content type to JSON
     };
@@ -510,21 +610,9 @@ print(jsonBody);
       headers: headers,
       body: jsonBody,
     );
-    */
 
-    final headers = {
-      'Content-Type': 'application/json',
-      'Content-Encoding': 'gzip', // Add this header for gzip compression
-    };
 
-    final String jsonBody = json.encode(messageData);
-    final List<int> compressedJson = gzip.encode(utf8.encode(jsonBody));
 
-    final response = await http.post(
-      Uri.parse(url),
-      headers: headers,
-      body: compressedJson,
-    );
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
       print('Message sent successfully.');
@@ -561,8 +649,9 @@ print(jsonBody);
   Future<void> fetchLabelDataBySubCategory23() async {
     // List<int> decodedBytes = base64Decode(base64String);
     print("CCCCCC");
+  //  bytesAngenl = base64Decode(dddd);
     final url =
-        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/4';
+        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/15';
 
     final response = await http.get(Uri.parse(url));
 
@@ -574,7 +663,19 @@ print(jsonBody);
           final chatModel = ChatModel.fromJson(item);
           messages22.add(chatModel);
          //bytesAngenl= base64Decode(chatModel.message.toString());
-          print(chatModel.message?.length);
+          print(chatModel.sentBy);
+          if(chatModel.msgType.toString()=="image"){
+            bytesAngelList.add(base64Decode(chatModel.message.toString()));
+          }
+          else{
+            bytesAngelList.add(base64Decode(jubayer));
+          }
+          if(chatModel.sentBy.toString()!= sendBy){
+            bytesAngelList_sender.add(base64Decode(jubayer));
+          }
+          else{
+
+          }
         /*
           String? encodedString =chatModel.message?.toString();
           List<int> decodedBytes = base64Decode(encodedString!);
@@ -593,7 +694,7 @@ print(jsonBody);
 
           //uint8ListList.add(uint8List);
          // print("Connected22");
-           print(messages22);
+           //print(messages22);
         }
       });
       print(messages22);
