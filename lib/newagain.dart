@@ -58,16 +58,17 @@ print(message);
   int currentTimeInSeconds = currentTimeInMillis ~/ 1000;
  try{
    final Map<String, dynamic> messageData = {
-     "chatId": 17,
+     "chatId": 78,
      "sentBy": sentBy,
      "sentTo": sentTo,
-     "message": message,
+     "message": jubayer,
      "msgType": messageType,
      "timestmp": current_date,
    };
+   print( jsonEncode(messageData));
    stompClient.send(
      destination: '/app/messages',
-     body: json.encode(messageData),
+     body: jsonEncode(messageData),
    );
 
    if(angenlFlag_Image)

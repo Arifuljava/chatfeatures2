@@ -53,6 +53,7 @@ dev_dependencies:
   fluttertoast: ^8.2.2
   stomp_dart_client: ^0.4.4
   circular_image:
+  shared_preferences:
 
 
 
