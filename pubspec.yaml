@@ -54,6 +54,7 @@ dev_dependencies:
   stomp_dart_client: ^0.4.4
   circular_image:
   shared_preferences:
+  google_fonts:
 
 
 

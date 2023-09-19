@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:chatfeatures/textmodel.dart';
 import 'package:flutter/services.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
@@ -30,6 +31,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:circular_image/circular_image.dart';
 import 'package:image/image.dart' as img;
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 //base 64
 import 'dart:convert';
 import 'dart:typed_data';
@@ -155,6 +158,7 @@ class chatmainState extends State<ChatSection> {
     // TODO: implement dispose
     _scrollController.dispose();
     _listStreamController.close();
+    stompClient.deactivate();
     super.dispose();
   }
 
@@ -357,6 +361,7 @@ print(base64StringAngenl);
       fontSize: 16.0,                  // Font size of the message
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope( onWillPop: () async{
@@ -492,8 +497,10 @@ return  await backgooo(context);
                                   Padding(
                                     padding: EdgeInsets.all(4), // Added margin around the text
                                     child: Text(
-                                      messages22[index].message.toString(),
-                                      style: TextStyle(fontSize: 15),
+                                      String.fromCharCodes(
+                                        messages22[index].message.toString().codeUnits,
+                                      ),
+                                      style: GoogleFonts.notoSans(fontSize: 15),
                                     ),
                                   ),
                                 if (messages22[index].msgType == "image" &&
@@ -584,6 +591,7 @@ return  await backgooo(context);
                         {
                          // await sendChatMessage2222(message_tobesend.toString());
                           setState(() {
+
                             print("NON Empty");
 
                    //
@@ -610,7 +618,10 @@ return  await backgooo(context);
                             msgType: "text",timestmp:current_date,serverTimestmp: currentTimeInSeconds.toString() );
 
                             setState(() {
+
                               messages22.add(chatmodel);
+                              //textMessageList.add(chineseString);
+                              textMessage.text= "";
                             });
                             textMessage.text = "";
                             showMyToast("Message Send");
@@ -719,25 +730,45 @@ print(jsonBody);
   //late List<int> decodedBytes;
   List<Uint8List> uint8ListList = [];
   late   Uint8List uint8List22  ;
-
+  List<String> textMessageList = [];
   Future<void> fetchLabelDataBySubCategory23() async {
-    // List<int> decodedBytes = base64Decode(base64String);
-   // print("CCCCCC");
-  //  bytesAngenl = base64Decode(dddd);
     final url =
-        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/19';
-
+        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/890';
     final response = await http.get(Uri.parse(url));
-
     if (response.statusCode == 200) {
       final List<dynamic> labelDataList = json.decode(response.body);
       setState(() {
         messages22.clear(); // Clear existing messages
         for (var item in labelDataList) {
           final chatModel = ChatModel.fromJson(item);
-          messages22.add(chatModel);
-         //bytesAngenl= base64Decode(chatModel.message.toString());
-        //  print(chatModel.sentBy);
+
+          final messageId = item['messageId'];
+          final chatId = item['chatId'];
+          final sentBy = item['sentBy'];
+          final sentTo = item['sentTo'];
+          final message = item['message'];
+          final msgType = item['msgType'];
+          final timestmp = item['timestmp'];
+          final serverTimestmp = item['serverTimestmp'];
+          String encodedString = message;
+          List<int> bytes = encodedString.codeUnits;
+          String chineseString = utf8.decode(bytes);
+          final data = ChatModel(
+
+              messageId: messageId,
+              chatId: chatId,
+              sentBy: sentBy,
+              sentTo: sentTo,
+              message: chineseString,
+              msgType: msgType,
+              timestmp: timestmp,
+              serverTimestmp: serverTimestmp
+
+          );
+          //print(data);
+          messages22.add(data);
+         // Textmodel new_text=  Textmodel(chineseString);
+
           if(chatModel.msgType.toString()=="image"){
             bytesAngelList.add(base64Decode(chatModel.message.toString()));
           }
@@ -748,12 +779,9 @@ print(jsonBody);
             bytesAngelList_sender.add(base64Decode(base64StringAngenl));
           }
           else{
-
           }
-
         }
       });
-    // print(messages22);
     } else {
       print(" Status code: ${response.statusCode}");
       print("Response body: ${response.body}");
