@@ -234,19 +234,19 @@ class chatmainState extends State<ChatSection> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildRow(context, "Select Image", Icons.image, "Select Video", Icons.video_library),
-              _buildRow(context, "Voice", Icons.mic, "Select Document", Icons.file_copy),
+              _buildRow(context, "Select Image", Icons.image),
+
             ],
           ),
         );
       },
     );
   }
-  Widget _buildRow(BuildContext context, String text1, IconData icon1, String text2, IconData icon2) {
+  Widget _buildRow(BuildContext context, String text1, IconData icon1) {
     return Row(
       children: [
         _buildOption(context, text1, icon1),
-        _buildOption(context, text2, icon2),
+
       ],
     );
   }
@@ -416,7 +416,8 @@ return  await backgooo(context);
                 padding: EdgeInsets.only(top: 10, bottom: 50),
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return Container(
+                  return /*
+                  Container(
                     padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
                     child: Align(
                       alignment: (messages22[index].sentBy != sendBy
@@ -456,6 +457,79 @@ return  await backgooo(context);
                       ),
                     ),
                   );
+                  */
+                    Container(
+                      padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: messages22[index].sentBy != sendBy
+                            ? MainAxisAlignment.start
+                            : MainAxisAlignment.end,
+                        children: [
+                          if (messages22[index].sentBy != sendBy)
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.shade200,
+                              ),
+                              padding: EdgeInsets.all(4), // Reduced icon padding
+                              child: Padding(
+                                padding: EdgeInsets.all(4), // Added margin around the icon
+                                child: Icon(Icons.person, color: Colors.black), // Add your left icon here
+                              ),
+                            ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: messages22[index].sentBy != sendBy
+                                  ? Colors.grey.shade200
+                                  : Colors.blue[200],
+                            ),
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                              children: [
+                                if (messages22[index].msgType == "text")
+                                  Padding(
+                                    padding: EdgeInsets.all(4), // Added margin around the text
+                                    child: Text(
+                                      messages22[index].message.toString(),
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                if (messages22[index].msgType == "image" &&
+                                    messages22[index].sentBy != sendBy)
+                                  Image.memory(
+                                    bytesAngelList[index],
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                if (messages22[index].msgType == "image" &&
+                                    messages22[index].sentBy == sendBy)
+                                  Image.memory(
+                                    bytesAngelList_sender[index],
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          if (messages22[index].sentBy == sendBy)
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blue[200],
+                              ),
+                              padding: EdgeInsets.all(4), // Reduced icon padding
+                              child: Padding(
+                                padding: EdgeInsets.all(4), // Added margin around the icon
+                                child: Icon(Icons.person, color: Colors.white), // Add your right icon here
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
                 },
               ),
             )
@@ -648,7 +722,7 @@ print(jsonBody);
 
   Future<void> fetchLabelDataBySubCategory23() async {
     // List<int> decodedBytes = base64Decode(base64String);
-    print("CCCCCC");
+   // print("CCCCCC");
   //  bytesAngenl = base64Decode(dddd);
     final url =
         'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/19';
@@ -663,7 +737,7 @@ print(jsonBody);
           final chatModel = ChatModel.fromJson(item);
           messages22.add(chatModel);
          //bytesAngenl= base64Decode(chatModel.message.toString());
-          print(chatModel.sentBy);
+        //  print(chatModel.sentBy);
           if(chatModel.msgType.toString()=="image"){
             bytesAngelList.add(base64Decode(chatModel.message.toString()));
           }
@@ -676,28 +750,10 @@ print(jsonBody);
           else{
 
           }
-        /*
-          String? encodedString =chatModel.message?.toString();
-          List<int> decodedBytes = base64Decode(encodedString!);
-          uint8List3333 = Uint8List.fromList(decodedBytes);
-          print("GetData");
-          print(uint8List3333);
-         */
 
-        // String paddedMessage = chatModel.message.toString();
-        /*
-          while (paddedMessage.length % 4 != 0) {
-            paddedMessage += '=';
-          }
-         */
-           //uint8List = Uint8List.fromList(base64Decode(paddedMessage));
-
-          //uint8ListList.add(uint8List);
-         // print("Connected22");
-           //print(messages22);
         }
       });
-      print(messages22);
+    // print(messages22);
     } else {
       print(" Status code: ${response.statusCode}");
       print("Response body: ${response.body}");

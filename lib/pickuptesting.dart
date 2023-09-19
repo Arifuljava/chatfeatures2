@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:chatfeatures/newagain.dart';
-
+import 'package:chatfeatures/chatsection22.dart';
 
 class PickUpTesting extends StatefulWidget {
   const PickUpTesting({super.key});
@@ -68,15 +68,19 @@ class _PickUpTestingState extends State<PickUpTesting> {
     if (pickedFile != null) {
       List<int> imageBytes = await pickedFile.readAsBytes();
       String base64String = base64Encode(imageBytes);
-
+      final StringBuffer buffer = StringBuffer();
+      for (int byte in imageBytes) {
+        buffer.write(byte.toRadixString(16).padLeft(2, '0'));
+      }
+      print(buffer);
       setState(() {
         base64Image = base64String;
-        jubayer = base64String;
+       // jubayer = base64String;
       });
 
       // Send the base64 image to the server
      // await send(base64Image);
-      sendMessage(base64Image,"image","1","2");
+      await sendChatMessage2222(buffer.toString());
     }
   }
 
@@ -123,5 +127,52 @@ class _PickUpTestingState extends State<PickUpTesting> {
         ),
       ),
     );
+  }
+  //
+  Future<void> sendChatMessage2222(String sendmessage) async {
+    final url = 'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages'; // Replace with your API URL
+
+    final Map<String, dynamic> messageData = {
+      "chatId": 4,
+      "sentBy": "3",
+      "sentTo": "2",
+      "message":sendmessage,
+      "msgType": "sender",
+      "timestmp": "2023-08-31T08:11:05.814+00:00"
+    };
+
+
+    final headers = {
+      'Content-Type': 'application/json', // Set the content type to JSON
+    };
+
+    final String jsonBody = json.encode(messageData);
+    print(jsonBody);
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonBody,
+    );
+
+
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      print('Message sent successfully.');
+
+
+      // Add the sent message to the list and update the UI
+
+    }
+    else if (response.statusCode == 201) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+
+      print('Message sent successfully.');
+
+    }else {
+      print('Failed to send message. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
   }
 }
