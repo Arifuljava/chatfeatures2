@@ -55,6 +55,7 @@ dev_dependencies:
   circular_image:
   shared_preferences:
   google_fonts:
+  flutter_image_compress:
 
 
 

@@ -8,6 +8,7 @@ import 'package:chatfeatures/chatsection22.dart';
 import 'package:chatfeatures/checkuserexsit.dart';
 import 'package:chatfeatures/flooradd.dart';
 import 'package:chatfeatures/fontproblem.dart';
+import 'package:chatfeatures/imagecompressor.dart';
 import 'package:chatfeatures/imagetobinary.dart';
 import 'package:chatfeatures/imagetobyteconvert.dart';
 import 'package:chatfeatures/pickuptesting.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SendImageToServer(),
+      home: ImageCompressor(),
     );
   }
 }
