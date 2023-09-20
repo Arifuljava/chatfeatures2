@@ -283,12 +283,12 @@ class chatmainState extends State<ChatSection> {
     if (pickedFile != null) {
       final imageBytes = await pickedFile.readAsBytes();
       base64StringAngenl = imageToBase64(imageBytes);
-      second_dd=base64StringAngenl;
+     // second_dd=base64StringAngenl;
 
 
-      angenl_index++;
-      print("hahhakhdkahfklashfkasdf");
-      print(bytesAngelList_sender);
+      //angenl_index++;
+    //  print("hahhakhdkahfklashfkasdf");
+    //  print(bytesAngelList_sender);
       setState(() {
         bytesAngelList_sender.add(base64Decode(base64StringAngenl));
         issendImage=true;
@@ -296,7 +296,7 @@ class chatmainState extends State<ChatSection> {
       });
 
 
-    sendMessage(jubayer,"image","1","2");
+    sendMessage(base64StringAngenl,"image","1","2");
 
      // await sendChatMessage2222(base64StringAngenl);
 print(imageBytes);
@@ -421,48 +421,7 @@ return  await backgooo(context);
                 padding: EdgeInsets.only(top: 10, bottom: 50),
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return /*
-                  Container(
-                    padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-                    child: Align(
-                      alignment: (messages22[index].sentBy != sendBy
-                          ? Alignment.topLeft
-                          : Alignment.topRight),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: (messages22[index].sentBy != sendBy
-                              ? Colors.grey.shade200
-                              : Colors.blue[200]),
-                        ),
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            if (messages22[index].msgType == "text")
-                              Text(
-                                messages22[index].message.toString(),
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            if (messages22[index].msgType == "image" && messages22[index].sentBy != sendBy)
-                              Image.memory(
-                                bytesAngelList[index],
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            if (messages22[index].msgType == "image" && messages22[index].sentBy == sendBy)
-                              Image.memory(
-                                bytesAngelList_sender[index],
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                  */
+                  return
                     Container(
                       padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
                       child: Row(
