@@ -37,6 +37,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
+
+import 'package:chatfeatures/chatModel.dart';
+import 'package:flutter/material.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:chatfeatures/chatmain.dart';
+import 'dart:convert';
+
 
 
 Future<void> pickImageAndConvertToBase64() async {
@@ -761,6 +775,11 @@ print(jsonBody);
  await loadImageByteaas(filtpath);
 
   }
+  //socket
+
+
+//socket
+
 }
 /*
 List<ChatMessage> messages = [
