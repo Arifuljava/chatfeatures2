@@ -9,6 +9,7 @@ import 'package:chatfeatures/chatwithsocket.dart';
 import 'package:chatfeatures/checkuserexsit.dart';
 import 'package:chatfeatures/flooradd.dart';
 import 'package:chatfeatures/fontproblem.dart';
+import 'package:chatfeatures/icondetails.dart';
 import 'package:chatfeatures/imagecompressor.dart';
 import 'package:chatfeatures/imagetobinary.dart';
 import 'package:chatfeatures/imagetobyteconvert.dart';
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ChatWithSocket(),
+      home: ChatSection(),
     );
   }
 }

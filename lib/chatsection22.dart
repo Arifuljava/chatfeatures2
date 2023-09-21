@@ -130,6 +130,7 @@ class chatmainState extends State<ChatSection> {
   void initState() {
     // TODO: implement initState
     _startPollingAPI();
+   sendMessag22e();
     int year = now.year;
     int  month = now.month;
     int day = now.day;
@@ -297,18 +298,11 @@ class chatmainState extends State<ChatSection> {
     if (pickedFile != null) {
       final imageBytes = await pickedFile.readAsBytes();
       base64StringAngenl = imageToBase64(imageBytes);
-     // second_dd=base64StringAngenl;
-
-
-      //angenl_index++;
-    //  print("hahhakhdkahfklashfkasdf");
-    //  print(bytesAngelList_sender);
       setState(() {
         bytesAngelList_sender.add(base64Decode(base64StringAngenl));
         issendImage=true;
         angenlFlag_Image=true;
       });
-
 
     sendMessage(base64StringAngenl,"image","1","2");
 
@@ -620,6 +614,9 @@ return  await backgooo(context);
     );
 
   }
+  void sendMessag22e() async {
+    await sendChatMessage2222("arif Khan Jahan Ali ");
+  }
   Future<dynamic> backgooo(BuildContext context) async {
    /*
     Navigator.pushReplacement(
@@ -644,12 +641,12 @@ return  await backgooo(context);
 
   }
   Future<void> sendChatMessage2222(String sendmessage) async {
-    final url = 'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages'; // Replace with your API URL
+    final url = 'https://grozziie.zjweiting.com:3091/CustomerService-Chat/api/dev/messages'; // Replace with your API URL
 
     final Map<String, dynamic> messageData = {
       "chatId": 4,
-      "sentBy": "3",
-      "sentTo": "2",
+      "sentBy": 6,
+      "sentTo": 3,
       "message":sendmessage,
       "msgType": "sender",
       "timestmp": "2023-08-31T08:11:05.814+00:00"
@@ -674,6 +671,7 @@ print(jsonBody);
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
       print('Message sent successfully.');
+     /*
       final chatModel = ChatModel.fromJson(responseBody);
       showMyToast("Message sent");
 
@@ -681,6 +679,8 @@ print(jsonBody);
       setState(() {
         messages22.add(chatModel);
       });
+      */
+
     }
     else if (response.statusCode == 201) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
@@ -775,6 +775,8 @@ print(jsonBody);
  await loadImageByteaas(filtpath);
 
   }
+
+
   //socket
 
 

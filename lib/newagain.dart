@@ -134,7 +134,7 @@ print(message);
 }
 final stompClient = StompClient(
   config: StompConfig(
-    url: 'ws://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/websocket',
+    url: 'wss://grozziie.zjweiting.com:3091/CustomerService-Chat/websocket',
     onConnect: onConnect,
     beforeConnect: () async {
       print('waiting to connect...');
