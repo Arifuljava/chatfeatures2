@@ -40,6 +40,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
+/*
 class ImageCompressor extends StatefulWidget {
   const ImageCompressor({super.key});
 
@@ -58,7 +59,7 @@ class _ImageCompressorState extends State<ImageCompressor> {
       final imagePath = pickedFile.path;
 
       // Define the compression quality (0.4 means 40% quality)
-      final quality = 40;
+      final quality = 20;
 
       // Compress the image
       final List<int> compressedImage = (await FlutterImageCompress.compressWithFile(
@@ -110,4 +111,86 @@ await pickAndCompressImage();
      ),
    );
   }
+}
+
+ */
+
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ImageCompressor extends StatefulWidget {
+  const ImageCompressor({Key? key}) : super(key: key);
+
+  @override
+  State<ImageCompressor> createState() => _ImageCompressorState();
+}
+String base64StringAngenl= '';
+class _ImageCompressorState extends State<ImageCompressor> {
+  String imageToBase64(imageBytes){
+    // Read the image file as bytes
+    String base64String = base64Encode(imageBytes);
+
+    return base64String;
+  }
+  Uint8List? compressedImageBytes;
+
+  Future<void> pickAndCompressImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final imagePath = pickedFile.path;
+      final quality = 5;
+
+      final List<int> compressedImage = (await FlutterImageCompress.compressWithFile(
+        imagePath,
+        quality: quality,
+      )) as List<int>;
+      base64StringAngenl = imageToBase64(compressedImage);
+      print(base64StringAngenl);
+      setState(() {
+        compressedImageBytes = Uint8List.fromList(compressedImage);
+      });
+
+      final originalSize = File(imagePath).lengthSync();
+      final compressedSize = compressedImage.length;
+      print('Original Size: $originalSize bytes');
+      print('Compressed Size: $compressedSize bytes');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Image Compressor"),
+        ),
+        body: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                await pickAndCompressImage();
+              },
+              child: Text("Pick and Compress Image"),
+            ),
+            if (compressedImageBytes != null)
+              Image.memory(
+                compressedImageBytes!,
+                width: 300,
+                height: 300,
+                fit: BoxFit.cover,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(ImageCompressor());
 }
