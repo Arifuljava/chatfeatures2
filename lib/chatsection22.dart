@@ -417,18 +417,17 @@ return  await backgooo(context);
           children: <Widget>[
 
             Expanded(
-
               child: NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    // Detect when the user has reached the top of the list
-                    if (notification is ScrollEndNotification &&
-                        _scrollController.position.pixels ==
-                            _scrollController.position.minScrollExtent) {
-                      // Load older messages
-                      loadOlderMessages();
-                    }
-                    return false;
-                  },child: SingleChildScrollView(
+                onNotification: (notification) {
+                  // Detect when the user has reached the top of the list
+                  if (notification is ScrollEndNotification &&
+                      _scrollController.position.pixels ==
+                          _scrollController.position.minScrollExtent) {
+                    // Load older messages
+                    loadOlderMessages();
+                  }
+                  return false;
+                },
                 child: ListView.builder(
                   key: UniqueKey(),
                   controller: _scrollController,
@@ -437,100 +436,26 @@ return  await backgooo(context);
                   padding: EdgeInsets.only(top: 10, bottom: 50),
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return
-                      Container(
-                        padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: messages22[index].sentBy != sendBy
-                              ? MainAxisAlignment.start
-                              : MainAxisAlignment.end,
-                          children: [
-                            if (messages22[index].sentBy != sendBy)
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey.shade200,
-                                ),
-                                padding: EdgeInsets.all(4), // Reduced icon padding
-                                child: Padding(
-                                  padding: EdgeInsets.all(4), // Added margin around the icon
-                                  child: Icon(Icons.person, color: Colors.black), // Add your left icon here
-                                ),
-                              ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: messages22[index].sentBy != sendBy
-                                    ? Colors.grey.shade200
-                                    : Colors.blue[200],
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                                children: [
-                                  if (messages22[index].msgType == "text")
-                                    Padding(
-                                      padding: EdgeInsets.all(4), // Added margin around the text
-                                      child: Text(
-                                        String.fromCharCodes(
-                                          messages22[index].message.toString().codeUnits,
-                                        ),
-                                        style: GoogleFonts.notoSans(fontSize: 15),
-                                      ),
-                                    ),
-                                  if (messages22[index].msgType == "image" &&
-                                      messages22[index].sentBy != sendBy)
-                                    Image.memory(
-                                      bytesAngelList[index],
-                                      width: 200,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  if (messages22[index].msgType == "image" &&
-                                      messages22[index].sentBy == sendBy)
-                                    Image.memory(
-                                      bytesAngelList_sender[index],
-                                      width: 200,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                    ),
-                                ],
-                              ),
-                            ),
-                            if (messages22[index].sentBy == sendBy)
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blue[200],
-                                ),
-                                padding: EdgeInsets.all(4), // Reduced icon padding
-                                child: Padding(
-                                  padding: EdgeInsets.all(4), // Added margin around the icon
-                                  child: Icon(Icons.person, color: Colors.white), // Add your right icon here
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
+                    return Container(
+                      // Your chat message UI here
+                      child: Text(messages22[index].message.toString()),
+                    );
                   },
                 ),
               ),
-              ),
-            )
-            ,
+            ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
-                padding: EdgeInsets.only(left: 10,bottom: 10,top: 10),
+                padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
                 height: 60,
                 width: double.infinity,
                 color: Colors.white,
                 child: Row(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: (){
-                        print("getFiles");
-                        showCustomBottomSheet(context);
+                      onTap: () {
+                        // Handle attachment button tap
                       },
                       child: Container(
                         height: 30,
@@ -539,83 +464,44 @@ return  await backgooo(context);
                           color: Colors.lightBlue,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Icon(Icons.add, color: Colors.white, size: 20, ),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
-                    SizedBox(width: 15,),
+                    SizedBox(width: 15),
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                            hintText: "Write message...",
-                            hintStyle: TextStyle(color: Colors.black54),
-                            border: InputBorder.none
+                          hintText: "Write message...",
+                          hintStyle: TextStyle(color: Colors.black54),
+                          border: InputBorder.none,
                         ),
                         controller: textMessage,
                       ),
                     ),
-                    SizedBox(width: 15,),
+                    SizedBox(width: 15),
                     FloatingActionButton(
-                      onPressed: ()async{
-                        String message_tobesend= textMessage.text.toString();
-                        print(message_tobesend);
+                      onPressed: () {
+                        String messageToSend = textMessage.text.toString();
+                        if (messageToSend.isNotEmpty) {
+                          //sendMessage(messageToSend);
+                          textMessage.clear();
 
-                        if(message_tobesend.toString().isEmpty)
-                        {
-                          print("Empty");
-                          // await sendChatMessage2222(message_tobesend.toString());
                         }
-                        else
-                        {
-                         // await sendChatMessage2222(message_tobesend.toString());
-                          setState(() {
-
-                            print("NON Empty");
-
-                   //
-                            angenlFlag_Image=false;
-                        sendMessage(message_tobesend.toString(),"text","1","2");
-                        //_scrollToBottom();
-                            FocusScope.of(context).unfocus();
-                            final random = Random();
-                            int randomNumber = random.nextInt(100);
-                            int currentTimeInMillis = DateTime.now().millisecondsSinceEpoch;
-                            if(issendImage)
-                              {
-
-                              }
-                            else
-                              {
-
-                              }
-
-                            bytesAngelList_sender.add(base64Decode(jubayer));
-                            // Convert milliseconds to seconds
-                            int currentTimeInSeconds = currentTimeInMillis ~/ 1000;
-                            ChatModel chatmodel = new ChatModel(messageId:randomNumber,chatId: 2,sentBy: "1",sentTo: "2",message: message_tobesend.toString(),
-                            msgType: "text",timestmp:current_date,serverTimestmp: currentTimeInSeconds.toString() );
-
-                            setState(() {
-
-                              messages22.add(chatmodel);
-                              //textMessageList.add(chineseString);
-                              textMessage.text= "";
-                            });
-                            textMessage.text = "";
-                            showMyToast("Message Send");
-
-                          });
-                        }
-
                       },
-                      child: Icon(Icons.send,color: Colors.white,size: 18,),
+                      child: Icon(Icons.send, color: Colors.white, size: 18),
                       backgroundColor: Colors.blue,
                       elevation: 0,
                     ),
                   ],
-
                 ),
               ),
             ),
+
+
           ],
 
         ),
@@ -624,6 +510,7 @@ return  await backgooo(context);
     );
 
   }
+
   void sendMessag22e() async {
     await sendChatMessage2222("arif Khan Jahan Ali ");
   }
