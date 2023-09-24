@@ -18,6 +18,7 @@ import 'package:chatfeatures/pollingdata.dart';
 import 'package:chatfeatures/recentsectionsqllite.dart';
 import 'package:chatfeatures/recentsqllite.dart';
 import 'package:chatfeatures/scrolldowntest.dart';
+import 'package:chatfeatures/scrollldownlist.dart';
 import 'package:chatfeatures/seconddatabase.dart';
 import 'package:chatfeatures/sendimagetesting.dart';
 import 'package:chatfeatures/socket2.dart';
@@ -62,7 +63,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ChatSection(),
+      home: ScrollDownList(),
     );
   }
 }
