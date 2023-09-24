@@ -102,22 +102,8 @@ class chatmainState extends State<ChatSection> {
   bool _isLoading = false; // Flag to prevent multiple load requests
   ScrollController scrollController = ScrollController();
 
-  Future<void> scrollAnimation() async {
-    return await Future.delayed(
-        const Duration(milliseconds: 100),
-            () => scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.linear));
-  }
 
-  void _scrollToBottom() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
-  }
+
   String current_date = '';
   DateTime now = DateTime.now();
   void _startPollingAPI() {
@@ -126,18 +112,21 @@ class chatmainState extends State<ChatSection> {
       fetchLabelDataBySubCategory23();
     });
   }
+  void initDatabase() async {
+    await fetchLabelDataBySubCategory23();
+  }
   @override
   void initState() {
     // TODO: implement initState
     _startPollingAPI();
-   sendMessag22e();
+   //sendMessag22e();
     int year = now.year;
     int  month = now.month;
     int day = now.day;
     int  hour = now.hour;
     int min = now.minute;
     int second = now.second;
-
+    initDatabase();
     current_date = '$hour:$min:$second,$day/$month/$year';
     print(current_date);
     print(now);
@@ -145,7 +134,7 @@ class chatmainState extends State<ChatSection> {
       streamData();
 
       int_loadData();
-      inSro();
+
 
 
     });
@@ -164,9 +153,7 @@ class chatmainState extends State<ChatSection> {
       });
     });
   }
-  void inSro() async{
-  await  scrollAnimation();
-  }
+
 
   @override
   void dispose() {
@@ -369,7 +356,16 @@ print(base64StringAngenl);
       fontSize: 16.0,                  // Font size of the message
     );
   }
-
+  void loadOlderMessages() {
+    // Simulate loading older messages
+    // Add older messages to the 'messages' list
+    // Scroll up to show the older messages
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope( onWillPop: () async{
@@ -420,91 +416,105 @@ return  await backgooo(context);
         body: Stack(
           children: <Widget>[
 
-            SingleChildScrollView(
-              child: ListView.builder(
-                key: UniqueKey(),
-                controller: _scrollController,
-                itemCount: messages22.length,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(top: 10, bottom: 50),
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return
-                    Container(
-                      padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: messages22[index].sentBy != sendBy
-                            ? MainAxisAlignment.start
-                            : MainAxisAlignment.end,
-                        children: [
-                          if (messages22[index].sentBy != sendBy)
+            Expanded(
+
+              child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    // Detect when the user has reached the top of the list
+                    if (notification is ScrollEndNotification &&
+                        _scrollController.position.pixels ==
+                            _scrollController.position.minScrollExtent) {
+                      // Load older messages
+                      loadOlderMessages();
+                    }
+                    return false;
+                  },child: SingleChildScrollView(
+                child: ListView.builder(
+                  key: UniqueKey(),
+                  controller: _scrollController,
+                  itemCount: messages22.length,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(top: 10, bottom: 50),
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return
+                      Container(
+                        padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: messages22[index].sentBy != sendBy
+                              ? MainAxisAlignment.start
+                              : MainAxisAlignment.end,
+                          children: [
+                            if (messages22[index].sentBy != sendBy)
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey.shade200,
+                                ),
+                                padding: EdgeInsets.all(4), // Reduced icon padding
+                                child: Padding(
+                                  padding: EdgeInsets.all(4), // Added margin around the icon
+                                  child: Icon(Icons.person, color: Colors.black), // Add your left icon here
+                                ),
+                              ),
                             Container(
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(20),
+                                color: messages22[index].sentBy != sendBy
+                                    ? Colors.grey.shade200
+                                    : Colors.blue[200],
                               ),
-                              padding: EdgeInsets.all(4), // Reduced icon padding
-                              child: Padding(
-                                padding: EdgeInsets.all(4), // Added margin around the icon
-                                child: Icon(Icons.person, color: Colors.black), // Add your left icon here
-                              ),
-                            ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: messages22[index].sentBy != sendBy
-                                  ? Colors.grey.shade200
-                                  : Colors.blue[200],
-                            ),
-                            padding: EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                              children: [
-                                if (messages22[index].msgType == "text")
-                                  Padding(
-                                    padding: EdgeInsets.all(4), // Added margin around the text
-                                    child: Text(
-                                      String.fromCharCodes(
-                                        messages22[index].message.toString().codeUnits,
+                              padding: EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                                children: [
+                                  if (messages22[index].msgType == "text")
+                                    Padding(
+                                      padding: EdgeInsets.all(4), // Added margin around the text
+                                      child: Text(
+                                        String.fromCharCodes(
+                                          messages22[index].message.toString().codeUnits,
+                                        ),
+                                        style: GoogleFonts.notoSans(fontSize: 15),
                                       ),
-                                      style: GoogleFonts.notoSans(fontSize: 15),
                                     ),
-                                  ),
-                                if (messages22[index].msgType == "image" &&
-                                    messages22[index].sentBy != sendBy)
-                                  Image.memory(
-                                    bytesAngelList[index],
-                                    width: 200,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  ),
-                                if (messages22[index].msgType == "image" &&
-                                    messages22[index].sentBy == sendBy)
-                                  Image.memory(
-                                    bytesAngelList_sender[index],
-                                    width: 200,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  ),
-                              ],
-                            ),
-                          ),
-                          if (messages22[index].sentBy == sendBy)
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.blue[200],
-                              ),
-                              padding: EdgeInsets.all(4), // Reduced icon padding
-                              child: Padding(
-                                padding: EdgeInsets.all(4), // Added margin around the icon
-                                child: Icon(Icons.person, color: Colors.white), // Add your right icon here
+                                  if (messages22[index].msgType == "image" &&
+                                      messages22[index].sentBy != sendBy)
+                                    Image.memory(
+                                      bytesAngelList[index],
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  if (messages22[index].msgType == "image" &&
+                                      messages22[index].sentBy == sendBy)
+                                    Image.memory(
+                                      bytesAngelList_sender[index],
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                ],
                               ),
                             ),
-                        ],
-                      ),
-                    );
-                },
+                            if (messages22[index].sentBy == sendBy)
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.blue[200],
+                                ),
+                                padding: EdgeInsets.all(4), // Reduced icon padding
+                                child: Padding(
+                                  padding: EdgeInsets.all(4), // Added margin around the icon
+                                  child: Icon(Icons.person, color: Colors.white), // Add your right icon here
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                  },
+                ),
+              ),
               ),
             )
             ,
@@ -706,15 +716,13 @@ print(jsonBody);
   List<String> textMessageList = [];
   Future<void> fetchLabelDataBySubCategory23() async {
     final url =
-        'http://web-api-tht-env.eba-kcaa52ff.us-east-1.elasticbeanstalk.com/api/dev/messages/890';
+        'https://grozziie.zjweiting.com:3091/CustomerService-Chat/api/dev/messages';
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final List<dynamic> labelDataList = json.decode(response.body);
       setState(() {
         messages22.clear(); // Clear existing messages
         for (var item in labelDataList) {
-          final chatModel = ChatModel.fromJson(item);
-
           final messageId = item['messageId'];
           final chatId = item['chatId'];
           final sentBy = item['sentBy'];
@@ -723,36 +731,18 @@ print(jsonBody);
           final msgType = item['msgType'];
           final timestmp = item['timestmp'];
           final serverTimestmp = item['serverTimestmp'];
-          String encodedString = message;
-          List<int> bytes = encodedString.codeUnits;
-          String chineseString = utf8.decode(bytes);
+
           final data = ChatModel(
-
-              messageId: messageId,
-              chatId: chatId,
-              sentBy: sentBy,
-              sentTo: sentTo,
-              message: chineseString,
-              msgType: msgType,
-              timestmp: timestmp,
-              serverTimestmp: serverTimestmp
-
+            messageId: messageId,
+            chatId: chatId,
+            sentBy: sentBy.toString(),
+            sentTo: sentTo.toString(),
+            message: message.toString(),
+            msgType: msgType.toString(),
+            timestmp: timestmp.toString(),
+            serverTimestmp: serverTimestmp.toString(),
           );
-          //print(data);
           messages22.add(data);
-         // Textmodel new_text=  Textmodel(chineseString);
-
-          if(chatModel.msgType.toString()=="image"){
-            bytesAngelList.add(base64Decode(chatModel.message.toString()));
-          }
-          else{
-            bytesAngelList.add(base64Decode(jubayer));
-          }
-          if(chatModel.sentBy.toString()!= sendBy){
-            bytesAngelList_sender.add(base64Decode(base64StringAngenl));
-          }
-          else{
-          }
         }
       });
     } else {

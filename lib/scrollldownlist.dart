@@ -245,3 +245,113 @@ void main() {
     home: ScrollDownList(),
   ));
 }
+
+class MyChatScreen extends StatefulWidget {
+  @override
+  _MyChatScreenState createState() => _MyChatScreenState();
+}
+
+class _MyChatScreenState extends State<MyChatScreen> {
+  final ScrollController _scrollController = ScrollController();
+  List<ChatModel> messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    initDatabase();
+  }
+
+  // ...
+  Future<void> fetchLabelDataBySubCategory23() async {
+    final url =
+        'https://grozziie.zjweiting.com:3091/CustomerService-Chat/api/dev/messages';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final List<dynamic> labelDataList = json.decode(response.body);
+      print(labelDataList);
+      setState(() {
+        // Clear existing messages
+        messages.clear(); // Clear existing messages
+        for (var item in labelDataList) {
+          final messageId = item['messageId'];
+          final chatId = item['chatId'];
+          final sentBy = item['sentBy'];
+          final sentTo = item['sentTo'];
+          final message = item['message'];
+          final msgType = item['msgType'];
+          final timestmp = item['timestmp'];
+          final serverTimestmp = item['serverTimestmp'];
+
+          final data = ChatModel(
+            messageId: messageId,
+            chatId: chatId,
+            sentBy: sentBy.toString(),
+            sentTo: sentTo.toString(),
+            message: message.toString(),
+            msgType: msgType.toString(),
+            timestmp: timestmp.toString(),
+            serverTimestmp: serverTimestmp.toString(),
+          );
+          messages.add(data);
+        }
+        // Scroll to the bottom after adding new data
+
+      });
+    } else {
+      print("Status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+    }
+  }
+
+  void initDatabase() async {
+    await fetchLabelDataBySubCategory23();
+  }
+  void loadOlderMessages() {
+    // Simulate loading older messages
+    // Add older messages to the 'messages' list
+    // Scroll up to show the older messages
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Chat Screen'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                // Detect when the user has reached the top of the list
+                if (notification is ScrollEndNotification &&
+                    _scrollController.position.pixels ==
+                        _scrollController.position.minScrollExtent) {
+                  // Load older messages
+                  loadOlderMessages();
+                }
+                return false;
+              },
+              child: ListView.builder(
+                controller: _scrollController,
+                reverse: true, // Reverse the list to show new messages at the bottom
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(messages[index].message.toString()),
+                  );
+                },
+              ),
+            ),
+          ),
+          // Add a text input field and send button for new messages
+        ],
+      ),
+    );
+  }
+}
