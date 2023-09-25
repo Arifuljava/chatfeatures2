@@ -6,6 +6,7 @@ import 'package:chatfeatures/chatmain.dart';
 import 'package:chatfeatures/chatpage.dart';
 import 'package:chatfeatures/chatscreen.dart';
 import 'package:chatfeatures/chatscrolll.dart';
+import 'package:chatfeatures/chatscrollupanddown.dart';
 import 'package:chatfeatures/chatsection22.dart';
 import 'package:chatfeatures/chatwithsocket.dart';
 import 'package:chatfeatures/checkuserexsit.dart';

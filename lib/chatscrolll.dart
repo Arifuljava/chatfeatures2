@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
@@ -52,6 +51,7 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:chatfeatures/chatmain.dart';
 import 'dart:convert';
 
+/*
 class ChatScrollll extends StatefulWidget {
   const ChatScrollll({super.key});
 
@@ -83,8 +83,8 @@ class _ChatScrollllState extends State<ChatScrollll> {
 
     // Scroll to the bottom of the list after adding a new message
     scrollController.animateTo(
-      scrollController.position.maxScrollExtent+1,
-      duration: const Duration(milliseconds: 300),
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 100),
       curve: Curves.easeOut,
     );
 
@@ -159,6 +159,367 @@ class _ChatScrollllState extends State<ChatScrollll> {
       ),
     );
   }
+  Future<void> fetchLabelDataBySubCategory23() async {
+    final url =
+        'https://grozziie.zjweiting.com:3091/CustomerService-Chat/api/dev/messages/25';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final List<dynamic> labelDataList = json.decode(response.body);
+      setState(() {
+        messages.clear(); // Clear existing messages
+        for (var item in labelDataList) {
+          final messageId = item['messageId'];
+          final chatId = item['chatId'];
+          final sentBy = item['sentBy'];
+          final sentTo = item['sentTo'];
+          final message = item['message'];
+          final msgType = item['msgType'];
+          final timestmp = item['timestmp'];
+          final serverTimestmp = item['serverTimestmp'];
+
+          final data = ChatModel(
+            messageId: messageId,
+            chatId: chatId,
+            sentBy: sentBy.toString(),
+            sentTo: sentTo.toString(),
+            message: message.toString(),
+            msgType: msgType.toString(),
+            timestmp: timestmp.toString(),
+            serverTimestmp: serverTimestmp.toString(),
+          );
+          messages.add(data);
+        }
+      });
+    } else {
+      print(" Status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+    }
+  }
+}
+ */
+class ChatScrollll extends StatefulWidget {
+  const ChatScrollll({super.key});
+
+  @override
+  State<ChatScrollll> createState() => _ChatScrollllState();
+}
+
+class _ChatScrollllState extends State<ChatScrollll> {
+  final List<ChatModel> messages = [];
+  final TextEditingController textController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  void int_loadData() async {
+    await fetchLabelDataBySubCategory23();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      int_loadData();
+    });
+    super.initState();
+  }
+
+  void _sendMessage(ChatModel message) {
+    setState(() {
+      messages.add(message);
+    });
+
+    // Scroll to the bottom of the list after adding a new message
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeOut,
+    );
+
+    // Clear the input field
+    textController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.lightBlue,
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  width: 2,
+                ),
+                CircularImage(
+                  source:
+                      'https://senzary.com/wp-content/uploads/2019/01/person2.jpg',
+                  radius: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Kriss Benwat",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        "Online",
+                        style: TextStyle(
+                            color: Colors.grey.shade600, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    // await settingsImage(context);
+                  },
+                  child: Icon(
+                    Icons.settings,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              controller: scrollController,
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  padding:
+                      EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+                  child: Align(
+                    alignment: (messages[index].sentBy == "1"
+                        ? Alignment.topLeft
+                        : Alignment.topRight),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: (messages[index].sentBy == "1"
+                            ? Colors.grey.shade200
+                            : Colors.blue[200]),
+                      ),
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        messages[index].message.toString(),
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Divider(height: 1),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+            ),
+            child: _buildTextComposer(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextComposer1() {
+    return IconTheme(
+      data: IconThemeData(color: Colors.blue),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: <Widget>[
+            Flexible(
+              child: TextField(
+                controller: textController,
+                onSubmitted: (value) {
+                  ChatModel chatmodel = new ChatModel(
+                      messageId: 555555,
+                      chatId: 4,
+                      sentBy: "3",
+                      sentTo: "2",
+                      message: textController.text.toString(),
+                      msgType: "text",
+                      timestmp: "current_date",
+                      serverTimestmp: "currentTimeInSeconds".toString());
+                  _sendMessage(chatmodel);
+                },
+                decoration: InputDecoration.collapsed(
+                  hintText: 'Send a message',
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () {
+                ChatModel chatmodel = new ChatModel(
+                    messageId: 555555,
+                    chatId: 4,
+                    sentBy: "3",
+                    sentTo: "2",
+                    message: textController.text.toString(),
+                    msgType: "sender",
+                    timestmp: "current_date",
+                    serverTimestmp: "currentTimeInSeconds".toString());
+                if (textController.text.isNotEmpty) {
+                  _sendMessage(chatmodel);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextComposer() {
+    return IconTheme(
+      data: IconThemeData(color: Colors.blue),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: <Widget>[
+            Flexible(
+              child: Container(
+                padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+                height: 60,
+                width: double.infinity,
+                color: Colors.white,
+                child: Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        print("getFiles");
+                        // showCustomBottomSheet(context);
+                      },
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.lightBlue,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Write message...",
+                            hintStyle: TextStyle(color: Colors.black54),
+                            border: InputBorder.none),
+                        controller: textController,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    FloatingActionButton(
+                      onPressed: () async {
+                        String message_tobesend =
+                            textController.text.toString();
+                        print(message_tobesend);
+
+                        if (message_tobesend.toString().isEmpty) {
+                          print("Empty");
+                          // await sendChatMessage2222(message_tobesend.toString());
+                        } else {
+                          setState(() {
+                            print("NON Empty");
+
+                            //await sendChatMessage2222(message_tobesend.toString());
+                            sendMessage(
+                                message_tobesend.toString(), "text", "1", "2");
+                            //_scrollToBottom();
+                            //FocusScope.of(context).unfocus();
+                            final random = Random();
+                            int randomNumber = random.nextInt(100);
+                            int currentTimeInMillis =
+                                DateTime.now().millisecondsSinceEpoch;
+
+                            // Convert milliseconds to seconds
+                            int currentTimeInSeconds =
+                                currentTimeInMillis ~/ 1000;
+                            ChatModel chatmodel = new ChatModel(
+                                messageId: randomNumber,
+                                chatId: 4,
+                                sentBy: "3",
+                                sentTo: "2",
+                                message: message_tobesend.toString(),
+                                msgType: "text",
+                                timestmp: "current_date",
+                                serverTimestmp:
+                                    currentTimeInSeconds.toString());
+                            _sendMessage(chatmodel);
+
+                            textController.text = "";
+                            showMyToast("Message Send");
+                          });
+                        }
+                      },
+                      child: Icon(
+                        Icons.send,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      backgroundColor: Colors.blue,
+                      elevation: 0,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showMyToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT, // Duration of the toast
+      gravity: ToastGravity.BOTTOM, // Position of the toast
+      timeInSecForIosWeb: 1, // Time to show on iOS
+      backgroundColor: Colors.grey, // Background color of the toast
+      textColor: Colors.white, // Text color of the toast
+      fontSize: 16.0, // Font size of the message
+    );
+  }
+
   Future<void> fetchLabelDataBySubCategory23() async {
     final url =
         'https://grozziie.zjweiting.com:3091/CustomerService-Chat/api/dev/messages/25';

@@ -1086,20 +1086,5 @@ return  await backgooo(context);
 
   }
 }
-/*
-List<ChatMessage> messages = [
-  ChatMessage(messageContent: "Hello, Will", messageType: "receiver",servertime: "122"),
-  ChatMessage(messageContent: "How have you been?", messageType: "receiver",servertime: "122"),
-  ChatMessage(messageContent: "Hey Kriss, I am doing fine dude. wbu?", messageType: "sender",servertime: "122"),
-  ChatMessage(messageContent: "ehhhh, doing OK.", messageType: "receiver",servertime: "122"),
-  ChatMessage(messageContent: "Is there any thing wrong?", messageType: "sender",servertime: "122"),
-];
 
-class ChatMessage{
-  String messageContent;
-  String messageType;
-  String servertime;
-  ChatMessage({required this.messageContent, required this.messageType, required this.servertime});
-}
- */
 
